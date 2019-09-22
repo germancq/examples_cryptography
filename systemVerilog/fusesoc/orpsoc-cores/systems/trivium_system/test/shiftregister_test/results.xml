@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1569173714" />
+    <testcase classname="shiftregister_test" name="run_test_001" ratio_time="64579163714518.64" sim_time_ns="831000000000.0" time="0.012867927551269531" />
+    <testcase classname="shiftregister_test" name="run_test_002" ratio_time="72805001127960.89" sim_time_ns="831000000000.0" time="0.011414051055908203" />
+    <testcase classname="shiftregister_test" name="run_test_003" ratio_time="68564308527589.26" sim_time_ns="831000000000.0" time="0.01212000846862793" />
+    <testcase classname="shiftregister_test" name="run_test_004" ratio_time="69990695074198.27" sim_time_ns="831000000000.0" time="0.011873006820678711" />
+    <testcase classname="shiftregister_test" name="run_test_005" ratio_time="71780930123360.17" sim_time_ns="831000000000.0" time="0.01157689094543457" />
+    <testcase classname="shiftregister_test" name="run_test_006" ratio_time="69377707040347.14" sim_time_ns="831000000000.0" time="0.011977910995483398" />
+    <testcase classname="shiftregister_test" name="run_test_007" ratio_time="65552023170525.29" sim_time_ns="831000000000.0" time="0.01267695426940918" />
+    <testcase classname="shiftregister_test" name="run_test_008" ratio_time="69457894900460.336" sim_time_ns="831000000000.0" time="0.011964082717895508" />
+    <testcase classname="shiftregister_test" name="run_test_009" ratio_time="63923020650698.75" sim_time_ns="831000000000.0" time="0.013000011444091797" />
+    <testcase classname="shiftregister_test" name="run_test_010" ratio_time="72798918584736.2" sim_time_ns="831000000000.0" time="0.01141500473022461" />
+  </testsuite>
+</testsuites>

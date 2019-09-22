@@ -1,3 +1,9 @@
+'''
+ * @Author: German Cano Quiveu, germancq@gmail.com 
+ * @Date: 2019-09-21 22:20:30 
+ * @Last Modified by:   German Cano Quiveu, germancq@gmail.com 
+ * @Last Modified time: 2019-09-21 22:20:30 
+''' 
 #trivium stream cipher
 #80 bit key
 #Initialization phase
@@ -5,14 +11,18 @@
 #encryption phase
 #structure
 #3 LFSR : A,B,C (288 total bits)
-#Si = (A92 XOR A65) XOR (B83 XOR B68) XOR (C110 XOR C65)
-#A0 = (C110 XOR C65) XOR (C108 AND C109) XOR A68
-#B0 = (A92 XOR A65) XOR (A90 AND A91) XOR B77
-#C0 = (B83 XOR B68) XOR (B81 AND B82) XOR C86
+#Si = Aout XOR Bout XOR Cout
+#A0 = Cout XOR A68 XOR (C108 AND C109)
+#B0 = Aout XOR B77 XOR (A90 AND A91)
+#C0 = Bout XOR C86 XOR (B81 AND B82)
+#Aout = A92  XOR A65
+#Bout = B83  XOR B68
+#Cout = C110  XOR C65
 
 #Initialization:
-#80 bit IV loaded in A0-A79
-#80 bit key loaded in B0-B79
+#80 bit Key loaded in A0-A79 (K1,....,K80,0,0,0..,0)
+#80 bit IV loaded in B0-B79
+#last 3 bits of register C is set to 1
 #all other register bits to 0
 
 #warm up:
@@ -24,12 +34,7 @@
 
 from collections import deque
 from bitstring import BitArray
-import re
 
-def str_to_bin(string):
-    s = ' '.join(format(x, '08b') for x in bytearray(string,'utf-8'))
-    s = re.sub(r'\s+','',s)
-    return s
 
 class Trivium:
     A = deque([0]*93)
@@ -42,17 +47,24 @@ class Trivium:
         #hex to bits
         key_ = BitArray(hex=key)
         IV_ = BitArray(hex=IV)
-
+        print(key_.hex)
+        key_.byteswap()
+        print(key_.hex)
+        IV_.byteswap()
 
 
         self.check_len(key_.bin,IV_.bin)
 
 
-        for i in range(0,len(key_.bin)):
-            self.B[i] = int(key_.bin[i])
+        for i in range(0,len(IV_.bin)):
+            self.B[i] = int(IV_.bin[i])
 
-        for j in range(0,len(IV_.bin)):
-            self.A[j] = int(IV_.bin[j])
+        for j in range(0,len(key_.bin)):
+            self.A[j] = int(key_.bin[j])
+            
+        self.C[108] = 1
+        self.C[109] = 1
+        self.C[110] = 1    
 
         return 1
 
@@ -61,27 +73,25 @@ class Trivium:
             self.step()
 
 
-    def Encryption(self,length):
+    def gen_keystream(self,length):
+        keystream = []
         for i in range(0,length):
-            yield self.step()
+            keystream.append(self.step())
+        return keystream    
 
     def step(self):
-        sa = self.A[92] ^ self.A[65]
-        sb = self.B[83] ^ self.B[68]
-        sc = self.C[110] ^ self.C[65]
-        s = sa ^ sb ^ sc
-        a00 = self.A[68]
-        a01 = self.C[108] & self.C[109]
-        a0 = sc ^ a00 ^ a01
-        b00 = self.B[77]
-        b01 = self.A[90] & self.A[91]
-        b0 = sa ^ b00 ^ b01
-        c00 = self.C[86]
-        c01 = self.B[81] & self.B[82]
-        c0 = sb ^ c00 ^ c01
-        self.shift_right(self.A,a0)
-        self.shift_right(self.B,b0)
-        self.shift_right(self.C,c0)
+        Aout = self.A[92] ^ self.A[65] 
+        Bout = self.B[83] ^ self.B[68]
+        Cout = self.C[110] ^ self.C[65] 
+        s = Aout ^ Bout ^ Cout
+
+        A0 = Cout ^ self.A[68] ^ (self.C[108] & self.C[109])
+        B0 = Aout ^ self.B[77] ^ (self.A[90] & self.A[91])
+        C0 = Bout ^ self.C[86] ^ (self.B[81] & self.B[82])
+        
+        self.shift_right(self.A,A0)
+        self.shift_right(self.B,B0)
+        self.shift_right(self.C,C0)
         return s
 
     def shift_right(self,register,value):
@@ -94,14 +104,22 @@ class Trivium:
             raise ValueError('values for key an IV must not exceed 80 bits')
 
 
-
-if __name__ == "__main__":
-    key = "01020304050607080900"#HEX
-    IV = "01020304050607080900"#HEX
-
-
+def trivium_impl(key,iv,n):
+    key = hex(key)#HEX
+    IV = hex(iv)#HEX
     trivium = Trivium()
     trivium.Initialization(key,IV)
     trivium.Warm_up()
-    s = trivium.Encryption(80)
-    print (BitArray(s).hex)
+    s = trivium.gen_keystream(n)
+    hex_keystream = '0b' + ''.join(str(i) for i in s[::-1])
+    hex_keystream = BitArray(hex_keystream)
+    print (hex_keystream.hex)
+    hex_keystream.byteswap()
+    print (hex_keystream.hex)
+    return hex_keystream.hex
+
+
+if __name__ == "__main__":
+    trivium_impl(0x8000000,0x0,128)
+
+
