@@ -41,15 +41,23 @@ class Trivium:
     B = deque([0]*84)
     C = deque([0]*111)
 
+    def rst(self):
+        for i in range(0,93):
+            self.A[i] = 0
+        for j in range(0,84):
+            self.B[j] = 0
+        for k in range(0,111):
+            self.C[k] = 0        
 
     def Initialization(self,key,IV):
 
         #hex to bits
         key_ = BitArray(hex=key)
         IV_ = BitArray(hex=IV)
-        print(key_.hex)
+        #print(key_.bin)
         key_.byteswap()
-        print(key_.hex)
+        #print(key_.bin)
+        #print(key_.bin[0])
         IV_.byteswap()
 
 
@@ -57,10 +65,10 @@ class Trivium:
 
 
         for i in range(0,len(IV_.bin)):
-            self.B[i] = int(IV_.bin[i])
+            self.B[len(IV_.bin)-1-i] = int(IV_.bin[i])
 
         for j in range(0,len(key_.bin)):
-            self.A[j] = int(key_.bin[j])
+            self.A[len(key_.bin)-j-1] = int(key_.bin[j])
             
         self.C[108] = 1
         self.C[109] = 1
@@ -76,7 +84,7 @@ class Trivium:
     def gen_keystream(self,length):
         keystream = []
         for i in range(0,length):
-            keystream.append(self.step())
+            keystream.append(self.step()[0])
         return keystream    
 
     def step(self):
@@ -92,7 +100,7 @@ class Trivium:
         self.shift_right(self.A,A0)
         self.shift_right(self.B,B0)
         self.shift_right(self.C,C0)
-        return s
+        return (s,A0,B0,C0,Aout,Bout,Cout)
 
     def shift_right(self,register,value):
         register.rotate(1)
@@ -105,8 +113,8 @@ class Trivium:
 
 
 def trivium_impl(key,iv,n):
-    key = hex(key)#HEX
-    IV = hex(iv)#HEX
+    key = hex(key).rstrip("L")#HEX
+    IV = hex(iv).rstrip("L")#HEX
     trivium = Trivium()
     trivium.Initialization(key,IV)
     trivium.Warm_up()
@@ -116,10 +124,10 @@ def trivium_impl(key,iv,n):
     print (hex_keystream.hex)
     hex_keystream.byteswap()
     print (hex_keystream.hex)
-    return hex_keystream.hex
+    return hex_keystream.bin
 
 
 if __name__ == "__main__":
-    trivium_impl(0x8000000,0x0,128)
+    trivium_impl(6799,0,128)
 
 
