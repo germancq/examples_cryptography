@@ -103,33 +103,23 @@ def warm_up_phase_test(dut, trivium_SW):
         raise TestFailure("""Error warm_up,wrong dout_A value = {0}, expected value is {1} at iteration {2}""".format(hex(int(dut.dout_A.value)),hex(bitArray_to_int_value(trivium_SW.A)),i))
         
        if(dut.dout_B != bitArray_to_int_value(trivium_SW.B)):
-            raise TestFailure("""Error warm_up,wrong dout_A value = {0}, expected value is {1} at iteration {2}""".format(hex(int(dut.dout_A.value)),hex(bitArray_to_int_value(trivium_SW.B)),i))
+            raise TestFailure("""Error warm_up,wrong dout_B value = {0}, expected value is {1} at iteration {2}""".format(hex(int(dut.dout_B.value)),hex(bitArray_to_int_value(trivium_SW.B)),i))
             
        if(dut.dout_C != bitArray_to_int_value(trivium_SW.C)):
-            raise TestFailure("""Error warm_up,wrong dout_A value = {0}, expected value is {1} at iteration {2}""".format(hex(int(dut.dout_A.value)),hex(bitArray_to_int_value(trivium_SW.C)),i)) 
+            raise TestFailure("""Error warm_up,wrong dout_C value = {0}, expected value is {1} at iteration {2}""".format(hex(int(dut.dout_C.value)),hex(bitArray_to_int_value(trivium_SW.C)),i)) 
 
-        
-       print(dut.nonlinear_bit_C) 
+       
+       
+       
        yield n_cycles_clock(dut,1)
+     
+       
+       
        dout_a = int(dut.dout_A.value)
-
-       print(dut.nonlinear_bit_C)
        expected_values = trivium_SW.step()
-       if(dut.key_stream != expected_values[0]):
-            raise TestFailure("""Error warm_up,wrong key_stream value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.key_stream.value)),expected_values[0],i))
-       if(dut.input_bit_A != expected_values[1]):
-            raise TestFailure("""Error warm_up,wrong input_bit_A value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.input_bit_A.value)),expected_values[1],i))
-       if(dut.input_bit_B != expected_values[2]):
-            raise TestFailure("""Error warm_up,wrong input_bit_B value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.input_bit_B.value)),expected_values[2],i))
-       if(dut.input_bit_C != expected_values[3]):
-            raise TestFailure("""Error warm_up,wrong input_bit_C value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.input_bit_C.value)),expected_values[3],i))
-       if(dut.A_out != expected_values[4]):
-            raise TestFailure("""Error warm_up,wrong A_out value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.key_stream.value)),expected_values[4],i))
-       if(dut.B_out != expected_values[5]):
-            raise TestFailure("""Error warm_up,wrong B_out value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.key_stream.value)),expected_values[5],i))
-       if(dut.C_out != expected_values[6]):
-            raise TestFailure("""Error warm_up,wrong C_out value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.key_stream.value)),expected_values[6],i))
-    
+       
+       
+       
     
           
     if(dut.warm_up_complete != 1):
@@ -139,23 +129,21 @@ def warm_up_phase_test(dut, trivium_SW):
     
     
     
-    yield n_cycles_clock(dut,10)
     
-    if(dut.dout_A != dout_a):
-        raise TestFailure("Error warm_up,wrong dout_A value = %s"
-                          % hex(int(dut.dout_A.value)))
 
 
 @cocotb.coroutine
-def key_stream_generation_test(dut,expected_value,n) : 
+def key_stream_generation_test(dut,trivium_SW) : 
     dut.rst = 0
     dut.en = 1
-
+    expected_output = trivium_SW.gen_keystream(128)
+    #print(expected_output)
+    #print(expected_output[0])
     for i in range(0,n) :
-        expected_output = expected_value[i]
+        if(dut.key_stream != expected_output[i]):
+            raise TestFailure("""Error warm_up,wrong key_stream value = {0}, expected value is {1}  at iteration {2}""".format(hex(int(dut.key_stream.value)),expected_output[i],i))
         yield n_cycles_clock(dut,1)
-        if(int(dut.key_stream.value) != int(expected_output)):
-            raise TestFailure("""Error key generation,wrong key_stream value = {0} at posicion {1}""".format(hex(int(dut.key_stream.value)),i)) 
+        
                           
     
 
@@ -172,19 +160,16 @@ def n_cycles_clock(dut,n):
 @cocotb.coroutine
 def run_test(dut, key = 0 , iv = 0):
     trivium_SW = trivium.Trivium()
-    #expected_value = trivium.trivium_impl(key,iv,128)
-    #print(expected_value)
-    #print(expected_value[0])
-    setup_function(dut, 0, 0)
-    yield rst_function_test(dut, 0, 0, trivium_SW)
+    setup_function(dut, key, iv)
+    yield rst_function_test(dut, key, iv, trivium_SW)
     yield warm_up_phase_test(dut, trivium_SW)
-    #yield key_stream_generation_test(dut, expected_value, 128)
+    yield key_stream_generation_test(dut, trivium_SW)
     
 
 
 
 n = 2
 factory = TestFactory(run_test)
-factory.add_option("key", np.random.randint(low=0,high=(2**4)-1,size=n)) #array de 10 int aleatorios entre 0 y 31
-factory.add_option("iv", np.random.randint(low=0,high=(2**4)-1,size=n))
+factory.add_option("key", np.random.randint(low=0,high=(2**8)-1,size=n)) #array de 10 int aleatorios entre 0 y 31
+factory.add_option("iv", np.random.randint(low=0,high=(2**8)-1,size=n))
 factory.generate_tests()

@@ -1,18 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites name="results">
   <testsuite name="all" package="all" tests="0">
-    <property name="random_seed" value="1569254680" />
-    <testcase classname="trivium_test" name="run_test_001" ratio_time="36461690177982.86" sim_time_ns="211000000000.0" time="0.005786895751953125">
-      <failure message="Test failed with random_seed=1569254680" stderr="" stdout="'Unable to resolve to binary &gt;00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000x&lt;'" />
-    </testcase>
-    <testcase classname="trivium_test" name="run_test_002" ratio_time="39379134449682.98" sim_time_ns="231000000000.0" time="0.005866050720214844">
-      <failure message="Test failed with random_seed=1569254680" stderr="" stdout="'Error warm_up,wrong dout_A value = 0x0, expected value is 0x1L at iteration 2'" />
-    </testcase>
-    <testcase classname="trivium_test" name="run_test_003" ratio_time="46025567621490.664" sim_time_ns="231000000000.0" time="0.005018949508666992">
-      <failure message="Test failed with random_seed=1569254680" stderr="" stdout="'Error warm_up,wrong dout_A value = 0x0, expected value is 0x1L at iteration 2'" />
-    </testcase>
-    <testcase classname="trivium_test" name="run_test_004" ratio_time="45196819704249.664" sim_time_ns="231000000000.0" time="0.005110979080200195">
-      <failure message="Test failed with random_seed=1569254680" stderr="" stdout="'Error warm_up,wrong dout_A value = 0x0, expected value is 0x1L at iteration 2'" />
-    </testcase>
+    <property name="random_seed" value="1569324860" />
+    <testcase classname="trivium_test" name="run_test_001" ratio_time="38179733361288.46" sim_time_ns="23271000000000.0" time="0.6095118522644043" />
+    <testcase classname="trivium_test" name="run_test_002" ratio_time="39851158161971.7" sim_time_ns="23271000000000.0" time="0.5839478969573975" />
+    <testcase classname="trivium_test" name="run_test_003" ratio_time="39093189961481.82" sim_time_ns="23271000000000.0" time="0.5952699184417725" />
+    <testcase classname="trivium_test" name="run_test_004" ratio_time="40157315566395.21" sim_time_ns="23271000000000.0" time="0.579495906829834" />
   </testsuite>
 </testsuites>
