@@ -5,7 +5,7 @@
 #  @Last Modified time: 2019-09-21 22:21:14
 # 
 
-VERILOG_SOURCES = ../../rtl/systemVerilog/lookuptable.sv 
+VERILOG_SOURCES = ../../lookuptable.sv 
 
 TOPLEVEL=lookup_table
 MODULE=lookuptable_test

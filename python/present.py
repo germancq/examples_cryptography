@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/25 11:38:14 by germancq          #+#    #+#              #
-#    Updated: 2019/09/26 16:58:15 by germancq         ###   ########.fr        #
+#    Updated: 2019/09/30 19:32:56 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,7 +59,7 @@ class Present :
             state = addRoundKey(state,self.round_keys[i-1])
             #print(hex(state))
             #key = update_key(key,i)
-            #print(hex(round_keys[i]))
+            #print(hex(self.round_keys[i]))
             state = s_box_enc(state)
             #print(hex(state))
             state = pLayer_enc(state)
@@ -163,6 +163,7 @@ def pLayer_dec(state) :
 
 
 if __name__ == "__main__":
-    present_impl = Present(0x00000000000000000000)
+    #present_impl = Present(0x00000000000000000000)
+    present_impl = Present(0xFFFFFFFFFFFFFFFFFFFF)
     present_impl.encrypt(0x0000000000000000)
-    present_impl.decrypt(0x5579c1387b228445)
+    #present_impl.decrypt(0x5579c1387b228445)
