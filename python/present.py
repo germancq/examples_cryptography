@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/25 11:38:14 by germancq          #+#    #+#              #
-#    Updated: 2019/09/30 19:32:56 by germancq         ###   ########.fr        #
+#    Updated: 2019/09/30 21:16:25 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ class Present :
    
 
         for i in range (1,32):
-            #print(i)
+            print(i)
             state = addRoundKey(state,self.round_keys[32-i])
             #print(hex(state))
             #print(hex(round_keys[]))
@@ -55,15 +55,14 @@ class Present :
         
         
         for i in range (1,32):
-            #print(i)
+            print(i)
             state = addRoundKey(state,self.round_keys[i-1])
-            #print(hex(state))
-            #key = update_key(key,i)
-            #print(hex(self.round_keys[i]))
+            print(hex(state))
+            print(hex(self.round_keys[i]))
             state = s_box_enc(state)
-            #print(hex(state))
+            print(hex(state))
             state = pLayer_enc(state)
-            #print(hex(state))
+            print(hex(state))
             
         state = addRoundKey(state,self.round_keys[31])    
         
@@ -74,8 +73,8 @@ class Present :
 
 def generate_round_keys(key) :
     round_keys = []
-    new_key = key >> 16
-    round_keys.append(new_key)
+    new_key = key 
+    round_keys.append(key >> 16)
     for i in range(1,31+1):
         new_key = (update_key(new_key,i))
         round_keys.append(new_key >> 16)
@@ -102,14 +101,17 @@ def update_key(key,round_counter) :
      new_key = 0
 
      new_key = (key >> 19)
+     #print(hex(new_key))
+     #print(hex(((key & 0x7FFFF) << 61)))
      new_key = new_key + ((key & 0x7FFFF) << 61)
-     
+     #print(hex(new_key))
      
      S_indx = (new_key >> 76) & 0xF
      new_key = (new_key & (2**76-1)) + (S_box[S_indx] << 76)
-     
+     #print(hex(new_key))
      
      new_key = new_key ^ (round_counter << 15)
+     #print(hex(new_key))
      
      return new_key   
 
@@ -165,5 +167,6 @@ def pLayer_dec(state) :
 if __name__ == "__main__":
     #present_impl = Present(0x00000000000000000000)
     present_impl = Present(0xFFFFFFFFFFFFFFFFFFFF)
+    
     present_impl.encrypt(0x0000000000000000)
     #present_impl.decrypt(0x5579c1387b228445)
