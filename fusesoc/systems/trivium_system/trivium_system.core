@@ -1,0 +1,62 @@
+
+CAPI=2:
+
+
+#changes to fusesoc & edatool to read board_part
+# edatool : edalizes/templates/vivado/vivado-project.j2
+#     - add line: set_property board_part {{tool_options.board_part}} [current_project]
+# edatool : edalize/vivado.py
+#     - add code:
+#         tool_options = {'members' : {'part' : 'String' ,
+#                                      'board_part' : 'String' }}
+#
+#         get_doc method:
+#                   return {'description' : cls._description,
+#                    'members' : [
+#                        {'name' : 'part',
+#                         'type' : 'String',
+#                         'desc' : 'FPGA part number (e.g. xc7a35tcsg324-1)'},
+#			                  {'name' : 'board_part',
+#                         'type' : 'String',
+#                         'desc' : 'board_part (e.g. digilentinc.com:genesys2:part0:1.1)'}]}
+
+
+
+
+
+name : ::trivium_system:0
+description : Trivium example on basys3
+
+
+targets :
+  synth :
+
+    toplevel  : top
+
+    filesets  :
+      - rtl_top
+      - constraints
+
+    default_tool : vivado
+
+    tools:
+      vivado:
+        part : xc7a35t-cpg236-1
+        
+
+filesets :
+  rtl_top :
+
+    depend :
+      - trivium_cipher
+
+    file_type : systemVerilogSource
+
+    files :
+      - rtl/systemVerilog/top.sv
+      
+
+  constraints :
+    file_type : xdc
+    files :
+      - data/basys3.xdc

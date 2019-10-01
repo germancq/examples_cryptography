@@ -1,0 +1,16 @@
+CAPI=2:
+
+name : ::trivium_cipher:0
+description : trivium cipher
+
+
+filesets :
+ rtl :
+     file_type : systemVerilogSource
+
+     files :
+       - ../../../systemVerilog/trivium.sv
+
+
+
+ 
