@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/25 11:38:14 by germancq          #+#    #+#              #
-#    Updated: 2019/09/30 21:16:25 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/01 13:53:48 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ class Present :
    
 
         for i in range (1,32):
-            print(i)
+            #print(i)
             state = addRoundKey(state,self.round_keys[32-i])
             #print(hex(state))
             #print(hex(round_keys[]))
@@ -55,14 +55,14 @@ class Present :
         
         
         for i in range (1,32):
-            print(i)
+            #print(i)
             state = addRoundKey(state,self.round_keys[i-1])
-            print(hex(state))
-            print(hex(self.round_keys[i]))
+            #print(hex(state))
+            #print(hex(self.round_keys[i]))
             state = s_box_enc(state)
-            print(hex(state))
+            #print(hex(state))
             state = pLayer_enc(state)
-            print(hex(state))
+            #print(hex(state))
             
         state = addRoundKey(state,self.round_keys[31])    
         

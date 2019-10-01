@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    key_schedule_test.py                               :+:      :+:    :+:    #
+#    present_test.py                                    :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/09/30 16:19:23 by germancq          #+#    #+#              #
-#    Updated: 2019/10/01 11:56:07 by germancq         ###   ########.fr        #
+#    Created: 2019/10/01 13:00:00 by germancq          #+#    #+#              #
+#    Updated: 2019/10/01 13:59:13 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,31 +40,19 @@ CLK_PERIOD = 20 # 50 MHz
 #   to indicate that execution should resume if any of them fires
 
 
-def setup_function(dut, key):
+def setup_function(dut, key, plaintext):
     cocotb.fork(Clock(dut.clk, CLK_PERIOD).start())
     dut.rst = 0
     dut.key = key
-    dut.key_index = 0
+    dut.block_input = plaintext
+    dut.enc_dec = 0
     
 
 @cocotb.coroutine
-def rst_function_test(dut, key):
+def rst_function_test(dut):
     dut.rst = 1
     
     yield n_cycles_clock(dut,10)
-
-    
-    if(dut.counter_output != 0):
-        raise TestFailure("""Error rst,wrong counter_output value = {0}, expected value is {1}""".format(hex(int(dut.counter_output.value)),0))
-        
-    if(dut.key_register_output != key) : 
-        raise TestFailure("""Error rst,wrong key_register_output value = {0}, expected value is {1}""".format(hex(int(dut.key_register_output.value)),hex(key)))
-        
-    if(dut.end_signal != 0):
-        raise TestFailure("""Error rst,wrong end_signal value = {0}, expected value is {1}""".format(hex(int(dut.end_signal.value)),0))
-             
-
-    
 
     dut.rst = 0
 
@@ -72,40 +60,30 @@ def rst_function_test(dut, key):
 @cocotb.coroutine
 def generate_round_keys(dut) :
     dut.rst = 0
-    #i = 0
-    while dut.end_signal.value == 0 :
-        '''
-        if(dut.current_state == 1) :
-            print("**************")
-            print(i)
-            print(int(dut.counter_output))
-            i = i+1
-            print("**************")
-        '''    
+    while dut.end_key_generation.value == 0 :
         yield n_cycles_clock(dut,1)
         
 
             
-    if(dut.end_signal != 1):
-        raise TestFailure("""Error generate_round_keys,wrong end_signal value = {0}, expected value is {1}""".format(hex(int(dut.end_signal.value)),1))
+    if(dut.end_key_generation != 1):
+        raise TestFailure("""Error generate_round_keys,wrong end_signal value = {0}, expected value is {1}""".format(hex(int(dut.end_key_generation.value)),1))
              
 
 @cocotb.coroutine
-def check_round_keys(dut,present_SW) :
+def enc_dec_test(dut,expected_enc_value,expected_dec_value) :
     
-    for i in range(0,32) :
-        dut.key_index = i+1
-        expected_key = present_SW.round_keys[i]
-        print(i)
-        #
-        print(int(dut.key_index.value))
-        print(hex(int(dut.roundkey.value)))
-        print(hex(expected_key))
-        
-        if(dut.roundkey != expected_key) :
-            raise TestFailure("""Error check_round_keys,wrong key value = {0}, expected value is {1} at iteration {2}""".format(hex(int(dut.roundkey.value)),hex(expected_key),int(dut.key_index.value)))
-        
-        yield n_cycles_clock(dut,1)
+    yield n_cycles_clock(dut,1)
+    print(hex(int(dut.block_output.value)))
+    if(dut.block_output != expected_enc_value) :
+            raise TestFailure("""Error enc_test,wrong value = {0}, expected value is {1}""".format(hex(int(dut.block_output.value)),hex(expected_enc_value)))
+
+    dut.enc_dec = 1    
+
+    yield n_cycles_clock(dut,1)
+    print(hex(int(dut.block_output.value)))
+    if(dut.block_output != expected_dec_value) :
+            raise TestFailure("""Error dec_test,wrong value = {0}, expected value is {1}""".format(hex(int(dut.block_output.value)),hex(expected_dec_value)))
+    
        
 
 
@@ -120,13 +98,18 @@ def n_cycles_clock(dut,n):
 @cocotb.coroutine
 def run_test(dut, key = 0):
     key = random.randint(0,(2**32)-1)
+    text = random.randint(0,(2**32)-1)
+
     print(hex(key))
+    print(hex(text))
     present_SW = present.Present(key)
-    setup_function(dut,key)
+    expected_enc_value = present_SW.encrypt(text)
+    expected_dec_value = present_SW.decrypt(text)
+    setup_function(dut,key,text)
     
-    yield rst_function_test(dut, key)
+    yield rst_function_test(dut)
     yield generate_round_keys(dut)
-    yield check_round_keys(dut,present_SW)
+    yield enc_dec_test(dut,expected_enc_value,expected_dec_value)
 
 
 
