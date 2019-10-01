@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-09-30 12:33:30
  * @ Modified by: Your name
- * @ Modified time: 2019-10-01 13:58:48
+ * @ Modified time: 2019-10-01 16:04:31
  * @ Description:
  */
 
@@ -264,193 +264,179 @@ module present_dec_x32(
     output [63:0] block_o
 );
 
-    logic [63:0] block_o_0,
-                block_o_1,
-                block_o_2,
-                block_o_3,
-                block_o_4,
-                block_o_5,
-                block_o_6,
-                block_o_7,
-                block_o_8,
-                block_o_9,
-                block_o_10,
-                block_o_11,
-                block_o_12,
-                block_o_13,
-                block_o_14,
-                block_o_15,
-                block_o_16,
-                block_o_17,
-                block_o_18,
-                block_o_19,
-                block_o_20,
-                block_o_21,
-                block_o_22,
-                block_o_23,
-                block_o_24,
-                block_o_25,
-                block_o_26,
-                block_o_27,
-                block_o_28,
-                block_o_29;
+    logic [30][63:0] blocks_o;
+    
+    
 
     dec_stage dec_stage_0(
         .block_i(block_i ^ roundkeys[31]),
         .key_i(roundkeys[30]),
-        .block_o(block_o_0)
+        .block_o(blocks_o[0])
     );
+    /*
+    genvar i;
+    generate
+        for (i=1;i<31;i=i+1) begin
+            dec_stage dec_stage_x(
+                .block_i(blocks_o[i-1]),
+                .key_i(roundkeys[30-i]),
+                .block_o(blocks_o[i])
+            );
+        end
+    endgenerate
+    */
+    
     dec_stage dec_stage_1(
-        .block_i(block_o_0),
+        .block_i(blocks_o[0]),
         .key_i(roundkeys[29]),
-        .block_o(block_o_1)
+        .block_o(blocks_o[1])
     );
     dec_stage dec_stage_2(
-        .block_i(block_o_1),
+        .block_i(blocks_o[1]),
         .key_i(roundkeys[28]),
-        .block_o(block_o_2)
+        .block_o(blocks_o[2])
     );
     dec_stage dec_stage_3(
-        .block_i(block_o_2),
+        .block_i(blocks_o[2]),
         .key_i(roundkeys[27]),
-        .block_o(block_o_3)
+        .block_o(blocks_o[3])
     );
     dec_stage dec_stage_4(
-        .block_i(block_o_3),
+        .block_i(blocks_o[3]),
         .key_i(roundkeys[26]),
-        .block_o(block_o_4)
+        .block_o(blocks_o[4])
     );
     dec_stage dec_stage_5(
-        .block_i(block_o_4),
+        .block_i(blocks_o[4]),
         .key_i(roundkeys[25]),
-        .block_o(block_o_5)
+        .block_o(blocks_o[5])
     );
     dec_stage dec_stage_6(
-        .block_i(block_o_5),
+        .block_i(blocks_o[5]),
         .key_i(roundkeys[24]),
-        .block_o(block_o_6)
+        .block_o(blocks_o[6])
     );
     dec_stage dec_stage_7(
-        .block_i(block_o_6),
+        .block_i(blocks_o[6]),
         .key_i(roundkeys[23]),
-        .block_o(block_o_7)
+        .block_o(blocks_o[7])
     );
     dec_stage dec_stage_8(
-        .block_i(block_o_7),
+        .block_i(blocks_o[7]),
         .key_i(roundkeys[22]),
-        .block_o(block_o_8)
+        .block_o(blocks_o[8])
     );
     dec_stage dec_stage_9(
-        .block_i(block_o_8),
+        .block_i(blocks_o[8]),
         .key_i(roundkeys[21]),
-        .block_o(block_o_9)
+        .block_o(blocks_o[9])
     );
     dec_stage dec_stage_10(
-        .block_i(block_o_9),
+        .block_i(blocks_o[9]),
         .key_i(roundkeys[20]),
-        .block_o(block_o_10)
+        .block_o(blocks_o[10])
     );
     dec_stage dec_stage_11(
-        .block_i(block_o_10),
+        .block_i(blocks_o[10]),
         .key_i(roundkeys[19]),
-        .block_o(block_o_11)
+        .block_o(blocks_o[11])
     );
     dec_stage dec_stage_12(
-        .block_i(block_o_11),
+        .block_i(blocks_o[11]),
         .key_i(roundkeys[18]),
-        .block_o(block_o_12)
+        .block_o(blocks_o[12])
     );
     dec_stage dec_stage_13(
-        .block_i(block_o_12),
+        .block_i(blocks_o[12]),
         .key_i(roundkeys[17]),
-        .block_o(block_o_13)
+        .block_o(blocks_o[13])
     );
     dec_stage dec_stage_14(
-        .block_i(block_o_13),
+        .block_i(blocks_o[13]),
         .key_i(roundkeys[16]),
-        .block_o(block_o_14)
+        .block_o(blocks_o[14])
     );
     dec_stage dec_stage_15(
-        .block_i(block_o_14),
+        .block_i(blocks_o[14]),
         .key_i(roundkeys[15]),
-        .block_o(block_o_15)
+        .block_o(blocks_o[15])
     );
     dec_stage dec_stage_16(
-        .block_i(block_o_15),
+        .block_i(blocks_o[15]),
         .key_i(roundkeys[14]),
-        .block_o(block_o_16)
+        .block_o(blocks_o[16])
     );
     dec_stage dec_stage_17(
-        .block_i(block_o_16),
+        .block_i(blocks_o[16]),
         .key_i(roundkeys[13]),
-        .block_o(block_o_17)
+        .block_o(blocks_o[17])
     );
     dec_stage dec_stage_18(
-        .block_i(block_o_17),
+        .block_i(blocks_o[17]),
         .key_i(roundkeys[12]),
-        .block_o(block_o_18)
+        .block_o(blocks_o[18])
     );
     dec_stage dec_stage_19(
-        .block_i(block_o_18),
+        .block_i(blocks_o[18]),
         .key_i(roundkeys[11]),
-        .block_o(block_o_19)
+        .block_o(blocks_o[19])
     );
     dec_stage dec_stage_20(
-        .block_i(block_o_19),
+        .block_i(blocks_o[19]),
         .key_i(roundkeys[10]),
-        .block_o(block_o_20)
+        .block_o(blocks_o[20])
     );
     dec_stage dec_stage_21(
-        .block_i(block_o_20),
+        .block_i(blocks_o[20]),
         .key_i(roundkeys[9]),
-        .block_o(block_o_21)
+        .block_o(blocks_o[21])
     );
     dec_stage dec_stage_22(
-        .block_i(block_o_21),
+        .block_i(blocks_o[21]),
         .key_i(roundkeys[8]),
-        .block_o(block_o_22)
+        .block_o(blocks_o[22])
     );
     dec_stage dec_stage_23(
-        .block_i(block_o_22),
+        .block_i(blocks_o[22]),
         .key_i(roundkeys[7]),
-        .block_o(block_o_23)
+        .block_o(blocks_o[23])
     );
     dec_stage dec_stage_24(
-        .block_i(block_o_23),
+        .block_i(blocks_o[23]),
         .key_i(roundkeys[6]),
-        .block_o(block_o_24)
+        .block_o(blocks_o[24])
     );
     dec_stage dec_stage_25(
-        .block_i(block_o_24),
+        .block_i(blocks_o[24]),
         .key_i(roundkeys[5]),
-        .block_o(block_o_25)
+        .block_o(blocks_o[25])
     );
     dec_stage dec_stage_26(
-        .block_i(block_o_25),
+        .block_i(blocks_o[25]),
         .key_i(roundkeys[4]),
-        .block_o(block_o_26)
+        .block_o(blocks_o[26])
     );
     dec_stage dec_stage_27(
-        .block_i(block_o_26),
+        .block_i(blocks_o[26]),
         .key_i(roundkeys[3]),
-        .block_o(block_o_27)
+        .block_o(blocks_o[27])
     );
     dec_stage dec_stage_28(
-        .block_i(block_o_27),
+        .block_i(blocks_o[27]),
         .key_i(roundkeys[2]),
-        .block_o(block_o_28)
+        .block_o(blocks_o[28])
     );
     dec_stage dec_stage_29(
-        .block_i(block_o_28),
+        .block_i(blocks_o[28]),
         .key_i(roundkeys[1]),
-        .block_o(block_o_29)
+        .block_o(blocks_o[29])
     );
     dec_stage dec_stage_30(
-        .block_i(block_o_29),
+        .block_i(blocks_o[29]),
         .key_i(roundkeys[0]),
         .block_o(block_o)
     );
-
+    
 
 endmodule : present_dec_x32
 
@@ -713,70 +699,17 @@ module s_layer_enc(
     output [63:0] dout
 );
 
-    S_box_enc sbox0(
-        .din(din[3:0]),
-        .dout(dout[3:0])
-    );
-    S_box_enc sbox1(
-        .din(din[7:4]),
-        .dout(dout[7:4])
-    );
-    S_box_enc sbox2(
-        .din(din[11:8]),
-        .dout(dout[11:8])
-    );
-    S_box_enc sbox3(
-        .din(din[15:12]),
-        .dout(dout[15:12])
-    );
-    S_box_enc sbox4(
-        .din(din[19:16]),
-        .dout(dout[19:16])
-    );
-    S_box_enc sbox5(
-        .din(din[23:20]),
-        .dout(dout[23:20])
-    );
-    S_box_enc sbox6(
-        .din(din[27:24]),
-        .dout(dout[27:24])
-    );
-    S_box_enc sbox7(
-        .din(din[31:28]),
-        .dout(dout[31:28])
-    );
-    S_box_enc sbox8(
-        .din(din[35:32]),
-        .dout(dout[35:32])
-    );
-    S_box_enc sbox9(
-        .din(din[39:36]),
-        .dout(dout[39:36])
-    );
-    S_box_enc sbox10(
-        .din(din[43:40]),
-        .dout(dout[43:40])
-    );
-    S_box_enc sbox11(
-        .din(din[47:44]),
-        .dout(dout[47:44])
-    );
-    S_box_enc sbox12(
-        .din(din[51:48]),
-        .dout(dout[51:48])
-    );
-    S_box_enc sbox13(
-        .din(din[55:52]),
-        .dout(dout[55:52])
-    );
-    S_box_enc sbox14(
-        .din(din[59:56]),
-        .dout(dout[59:56])
-    );
-    S_box_enc sbox15(
-        .din(din[63:60]),
-        .dout(dout[63:60])
-    );
+    genvar i;
+    generate
+        for (i=0;i<16;i=i+1) begin
+            S_box_enc sbox(
+                .din(din[(i*4)+3:i*4]),
+                .dout(dout[(i*4)+3:i*4])
+            );
+        end
+    endgenerate
+
+    
 
 
 
@@ -788,70 +721,17 @@ module s_layer_dec(
     output [63:0] dout
 );
 
-    S_box_dec sbox0(
-        .din(din[3:0]),
-        .dout(dout[3:0])
-    );
-    S_box_dec sbox1(
-        .din(din[7:4]),
-        .dout(dout[7:4])
-    );
-    S_box_dec sbox2(
-        .din(din[11:8]),
-        .dout(dout[11:8])
-    );
-    S_box_dec sbox3(
-        .din(din[15:12]),
-        .dout(dout[15:12])
-    );
-    S_box_dec sbox4(
-        .din(din[19:16]),
-        .dout(dout[19:16])
-    );
-    S_box_dec sbox5(
-        .din(din[23:20]),
-        .dout(dout[23:20])
-    );
-    S_box_dec sbox6(
-        .din(din[27:24]),
-        .dout(dout[27:24])
-    );
-    S_box_dec sbox7(
-        .din(din[31:28]),
-        .dout(dout[31:28])
-    );
-    S_box_dec sbox8(
-        .din(din[35:32]),
-        .dout(dout[35:32])
-    );
-    S_box_dec sbox9(
-        .din(din[39:36]),
-        .dout(dout[39:36])
-    );
-    S_box_dec sbox10(
-        .din(din[43:40]),
-        .dout(dout[43:40])
-    );
-    S_box_dec sbox11(
-        .din(din[47:44]),
-        .dout(dout[47:44])
-    );
-    S_box_dec sbox12(
-        .din(din[51:48]),
-        .dout(dout[51:48])
-    );
-    S_box_dec sbox13(
-        .din(din[55:52]),
-        .dout(dout[55:52])
-    );
-    S_box_dec sbox14(
-        .din(din[59:56]),
-        .dout(dout[59:56])
-    );
-    S_box_dec sbox15(
-        .din(din[63:60]),
-        .dout(dout[63:60])
-    );
+    genvar i;
+    generate
+        for (i=0;i<16;i=i+1) begin
+            S_box_dec sbox(
+                .din(din[(i*4)+3:i*4]),
+                .dout(dout[(i*4)+3:i*4])
+            );
+        end
+    endgenerate
+
+    
 
 
 
