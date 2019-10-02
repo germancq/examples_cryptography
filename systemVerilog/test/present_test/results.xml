@@ -1,15 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites name="results">
   <testsuite name="all" package="all" tests="0">
-    <property name="random_seed" value="1569936315" />
-    <testcase classname="present_test" name="run_test_001" ratio_time="1714678798576.8398" sim_time_ns="2731000000000.0" time="1.5927181243896484">
-      <failure message="Test failed with random_seed=1569936315" stderr="" stdout="'Unable to resolve to binary &gt;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz&lt;'" />
-    </testcase>
-    <testcase classname="present_test" name="run_test_002" ratio_time="1793494247722.8335" sim_time_ns="2731000000000.0" time="1.5227258205413818">
-      <failure message="Test failed with random_seed=1569936315" stderr="" stdout="'Unable to resolve to binary &gt;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz&lt;'" />
-    </testcase>
-    <testcase classname="present_test" name="run_test_003" ratio_time="228310226.38779113" sim_time_ns="1000000000000.0" time="4380.005292892456">
-      <failure message="Test failed with random_seed=1569936315" stderr="" stdout="'Failing test at simulator request before test run completion: Simulator shutdown prematurely'" />
-    </testcase>
+    <property name="random_seed" value="1570013524" />
+    <testcase classname="present_test" name="run_test_001" ratio_time="1833992712367.7239" sim_time_ns="2751000000000.0" time="1.5000059604644775" />
+    <testcase classname="present_test" name="run_test_002" ratio_time="1766432873430.7517" sim_time_ns="2751000000000.0" time="1.5573759078979492" />
+    <testcase classname="present_test" name="run_test_003" ratio_time="1768970106576.3938" sim_time_ns="2751000000000.0" time="1.5551421642303467" />
+    <testcase classname="present_test" name="run_test_004" ratio_time="1750952266664.2388" sim_time_ns="2751000000000.0" time="1.5711450576782227" />
+    <testcase classname="present_test" name="run_test_005" ratio_time="1783159682971.314" sim_time_ns="2751000000000.0" time="1.54276704788208" />
+    <testcase classname="present_test" name="run_test_006" ratio_time="1749199048884.516" sim_time_ns="2751000000000.0" time="1.5727198123931885" />
+    <testcase classname="present_test" name="run_test_007" ratio_time="1636728540805.407" sim_time_ns="2751000000000.0" time="1.6807918548583984" />
+    <testcase classname="present_test" name="run_test_008" ratio_time="1725728854960.188" sim_time_ns="2751000000000.0" time="1.594109058380127" />
+    <testcase classname="present_test" name="run_test_009" ratio_time="1688060309759.0215" sim_time_ns="2751000000000.0" time="1.62968111038208" />
+    <testcase classname="present_test" name="run_test_010" ratio_time="1755799067786.2808" sim_time_ns="2751000000000.0" time="1.5668079853057861" />
   </testsuite>
 </testsuites>

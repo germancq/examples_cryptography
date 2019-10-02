@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-09-30 12:33:30
  * @ Modified by: Your name
- * @ Modified time: 2019-10-02 12:17:17
+ * @ Modified time: 2019-10-02 12:51:41
  * @ Description:
  */
 
@@ -546,7 +546,7 @@ module key_schedule(
     );
 
     //logic [2**5-1:0] [63:0] memory_data ;
-
+    logic memory_data_w;
 
     typedef enum logic [2:0] {IDLE,STORE_KEY,SHIFT_KEY,SBOX_KEY,XOR_KEY,END,WAIT_1,WAIT_2} state_t;
     state_t current_state, next_state;
@@ -558,9 +558,11 @@ module key_schedule(
         next_state = current_state;
 
         counter_up = 0;
+        memory_data_w = 0;
         end_signal = 1'b0;
         key_register_cl = 1'b0;
         key_register_w = 1'b0;
+        key_register_input = 80'h0;
         
 
         case(current_state)
@@ -576,8 +578,9 @@ module key_schedule(
             STORE_KEY :
                 begin
                     
-                    memory_data[counter_output] = key_register_output[79:16];
-                    
+                    //memory_data[counter_output] = key_register_output[79:16];
+                    memory_data_w = 1;
+
                     if(counter_output == 5'd31) begin
                         next_state = END;
                     end
@@ -624,6 +627,12 @@ module key_schedule(
         end
     end
 
+
+    always_ff @(posedge clk) begin
+        if (memory_data_w == 1'b1) begin
+            memory_data[counter_output] <= key_register_output[79:16];
+        end
+    end
 
 
 
