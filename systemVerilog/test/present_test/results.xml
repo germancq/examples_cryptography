@@ -1,16 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <testsuites name="results">
   <testsuite name="all" package="all" tests="0">
-    <property name="random_seed" value="1569938675" />
-    <testcase classname="present_test" name="run_test_001" ratio_time="1877403032798.8616" sim_time_ns="2751000000000.0" time="1.4653220176696777" />
-    <testcase classname="present_test" name="run_test_002" ratio_time="1717898570329.81" sim_time_ns="2751000000000.0" time="1.6013751029968262" />
-    <testcase classname="present_test" name="run_test_003" ratio_time="1814009855069.8208" sim_time_ns="2751000000000.0" time="1.5165297985076904" />
-    <testcase classname="present_test" name="run_test_004" ratio_time="1822783638354.1042" sim_time_ns="2751000000000.0" time="1.509230136871338" />
-    <testcase classname="present_test" name="run_test_005" ratio_time="1816643662467.4392" sim_time_ns="2751000000000.0" time="1.5143311023712158" />
-    <testcase classname="present_test" name="run_test_006" ratio_time="1745725839231.456" sim_time_ns="2751000000000.0" time="1.5758488178253174" />
-    <testcase classname="present_test" name="run_test_007" ratio_time="1652750468923.8323" sim_time_ns="2751000000000.0" time="1.6644980907440186" />
-    <testcase classname="present_test" name="run_test_008" ratio_time="1687350106715.8215" sim_time_ns="2751000000000.0" time="1.6303670406341553" />
-    <testcase classname="present_test" name="run_test_009" ratio_time="1799197446997.2185" sim_time_ns="2751000000000.0" time="1.529015064239502" />
-    <testcase classname="present_test" name="run_test_010" ratio_time="1800479903679.2205" sim_time_ns="2751000000000.0" time="1.527925968170166" />
+    <property name="random_seed" value="1569936315" />
+    <testcase classname="present_test" name="run_test_001" ratio_time="1714678798576.8398" sim_time_ns="2731000000000.0" time="1.5927181243896484">
+      <failure message="Test failed with random_seed=1569936315" stderr="" stdout="'Unable to resolve to binary &gt;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz&lt;'" />
+    </testcase>
+    <testcase classname="present_test" name="run_test_002" ratio_time="1793494247722.8335" sim_time_ns="2731000000000.0" time="1.5227258205413818">
+      <failure message="Test failed with random_seed=1569936315" stderr="" stdout="'Unable to resolve to binary &gt;zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz&lt;'" />
+    </testcase>
+    <testcase classname="present_test" name="run_test_003" ratio_time="228310226.38779113" sim_time_ns="1000000000000.0" time="4380.005292892456">
+      <failure message="Test failed with random_seed=1569936315" stderr="" stdout="'Failing test at simulator request before test run completion: Simulator shutdown prematurely'" />
+    </testcase>
   </testsuite>
 </testsuites>

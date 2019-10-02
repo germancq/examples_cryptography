@@ -1,0 +1,20 @@
+CAPI=1
+[main]
+description = "present cipher"
+
+[verilog]
+src_files =
+  systemVerilog/rtl/present.sv
+  systemVerilog/rtl/counter.sv
+  systemVerilog/rtl/register.sv
+
+
+[provider] 
+name = github
+user = germancq
+repo = examples_cryptography
+version = 1d8607e161368afd7cbed671dab0bf0c412ae241
+
+
+
+ 

@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-09-30 12:33:30
  * @ Modified by: Your name
- * @ Modified time: 2019-10-01 16:04:31
+ * @ Modified time: 2019-10-02 12:17:17
  * @ Description:
  */
 
@@ -264,7 +264,7 @@ module present_dec_x32(
     output [63:0] block_o
 );
 
-    logic [30][63:0] blocks_o;
+    logic [29:0][63:0] blocks_o;
     
     
 
