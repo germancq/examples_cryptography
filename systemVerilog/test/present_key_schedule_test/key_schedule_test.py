@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/09/30 16:19:23 by germancq          #+#    #+#              #
-#    Updated: 2019/10/01 11:56:07 by germancq         ###   ########.fr        #
+#    Created: 2019/10/07 12:55:52 by germancq          #+#    #+#              #
+#    Updated: 2019/10/07 13:38:47 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,16 +72,17 @@ def rst_function_test(dut, key):
 @cocotb.coroutine
 def generate_round_keys(dut) :
     dut.rst = 0
-    #i = 0
+    i = 0
     while dut.end_signal.value == 0 :
-        '''
+        
         if(dut.current_state == 1) :
             print("**************")
             print(i)
             print(int(dut.counter_output))
+            print(hex(int(dut.key_register_output.value)))
             i = i+1
             print("**************")
-        '''    
+            
         yield n_cycles_clock(dut,1)
         
 
@@ -92,6 +93,8 @@ def generate_round_keys(dut) :
 
 @cocotb.coroutine
 def check_round_keys(dut,present_SW) :
+
+    yield n_cycles_clock(dut,1)
     
     for i in range(0,32) :
         dut.key_index = i+1
@@ -120,7 +123,8 @@ def n_cycles_clock(dut,n):
 @cocotb.coroutine
 def run_test(dut, key = 0):
     key = random.randint(0,(2**32)-1)
-    print(hex(key))
+    #print(hex(key))
+    key = 0
     present_SW = present.Present(key)
     setup_function(dut,key)
     

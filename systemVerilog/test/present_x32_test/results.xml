@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1570460721" />
+    <testcase classname="present_test" name="run_test_001" ratio_time="1801940894432.4802" sim_time_ns="2751000000000.0" time="1.5266871452331543" />
+    <testcase classname="present_test" name="run_test_002" ratio_time="1776058833516.3748" sim_time_ns="2751000000000.0" time="1.5489351749420166" />
+    <testcase classname="present_test" name="run_test_003" ratio_time="1786782490522.188" sim_time_ns="2751000000000.0" time="1.5396389961242676" />
+    <testcase classname="present_test" name="run_test_004" ratio_time="1774877531541.5452" sim_time_ns="2751000000000.0" time="1.5499660968780518" />
+    <testcase classname="present_test" name="run_test_005" ratio_time="1773720703017.8152" sim_time_ns="2751000000000.0" time="1.5509769916534424" />
+    <testcase classname="present_test" name="run_test_006" ratio_time="1777853186706.9902" sim_time_ns="2751000000000.0" time="1.5473718643188477" />
+    <testcase classname="present_test" name="run_test_007" ratio_time="1778917497820.3943" sim_time_ns="2751000000000.0" time="1.5464460849761963" />
+    <testcase classname="present_test" name="run_test_008" ratio_time="1778778459301.4832" sim_time_ns="2751000000000.0" time="1.5465669631958008" />
+    <testcase classname="present_test" name="run_test_009" ratio_time="1772640812925.3958" sim_time_ns="2751000000000.0" time="1.5519218444824219" />
+    <testcase classname="present_test" name="run_test_010" ratio_time="1771495872456.931" sim_time_ns="2751000000000.0" time="1.5529248714447021" />
+  </testsuite>
+</testsuites>

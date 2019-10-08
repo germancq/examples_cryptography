@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/10/01 13:00:00 by germancq          #+#    #+#              #
-#    Updated: 2019/10/01 15:23:51 by germancq         ###   ########.fr        #
+#    Created: 2019/10/07 14:13:14 by germancq          #+#    #+#              #
+#    Updated: 2019/10/08 11:34:06 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,8 +44,9 @@ def setup_function(dut, key, plaintext):
     cocotb.fork(Clock(dut.clk, CLK_PERIOD).start())
     dut.rst = 0
     dut.key = key
-    dut.block_input = plaintext
+    dut.block_i = plaintext
     dut.enc_dec = 0
+   
     
 
 @cocotb.coroutine
@@ -63,7 +64,7 @@ def generate_round_keys(dut) :
     while dut.end_key_generation.value == 0 :
         yield n_cycles_clock(dut,1)
         
-
+    #yield n_cycles_clock(dut,1)
             
     if(dut.end_key_generation != 1):
         raise TestFailure("""Error generate_round_keys,wrong end_signal value = {0}, expected value is {1}""".format(hex(int(dut.end_key_generation.value)),1))
@@ -72,17 +73,53 @@ def generate_round_keys(dut) :
 @cocotb.coroutine
 def enc_dec_test(dut,expected_enc_value,expected_dec_value) :
     
-    yield n_cycles_clock(dut,1)
-    print(hex(int(dut.block_output.value)))
-    if(dut.block_output != expected_enc_value) :
-            raise TestFailure("""Error enc_test,wrong value = {0}, expected value is {1}""".format(hex(int(dut.block_output.value)),hex(expected_enc_value)))
-
+    
+    while dut.end_enc.value == 0 :
+        '''
+        print('//////////////////////////')
+        print(int(dut.key_index.value))
+        print(int(dut.present_enc_impl.key_index.value))
+        print(hex(int(dut.roundkey.value))) 
+        print(hex(int(dut.present_enc_impl.roundkey.value)))
+        print(hex(int(dut.present_enc_impl.block_i.value))) 
+        print(hex(int(dut.present_enc_impl.block_o.value))) 
+        
+        
+        print('//////////////////////////')
+        '''
+        yield n_cycles_clock(dut,1)
+        
+        
+    
+    #yield n_cycles_clock(dut,1)
+    print(hex(int(dut.block_o.value)))
+    if(dut.block_o != expected_enc_value) :
+            raise TestFailure("""Error enc_test,wrong value = {0}, expected value is {1}""".format(hex(int(dut.block_o.value)),hex(expected_enc_value)))
+    
+    
     dut.enc_dec = 1    
-
-    yield n_cycles_clock(dut,1)
-    print(hex(int(dut.block_output.value)))
-    if(dut.block_output != expected_dec_value) :
-            raise TestFailure("""Error dec_test,wrong value = {0}, expected value is {1}""".format(hex(int(dut.block_output.value)),hex(expected_dec_value)))
+    
+    while dut.end_dec.value == 0 :
+        '''
+        print('***********************')
+        print(int(dut.key_index.value))
+        print(int(dut.present_dec_impl.key_index.value))
+        print(hex(int(dut.roundkey.value))) 
+        print(hex(int(dut.present_dec_impl.roundkey.value)))
+        print(hex(int(dut.present_dec_impl.block_i.value))) 
+        print(hex(int(dut.present_dec_impl.block_o.value))) 
+        
+        
+        print('*************************')
+        '''
+        yield n_cycles_clock(dut,1)
+        
+        
+    
+    #yield n_cycles_clock(dut,1)
+    print(hex(int(dut.block_o.value)))
+    if(dut.block_o != expected_dec_value) :
+            raise TestFailure("""Error dec_test,wrong value = {0}, expected value is {1}""".format(hex(int(dut.block_o.value)),hex(expected_dec_value)))
     
        
 
@@ -99,6 +136,9 @@ def n_cycles_clock(dut,n):
 def run_test(dut, key = 0):
     key = random.randint(0,(2**32)-1)
     text = random.randint(0,(2**32)-1)
+
+    #key = 0xb0729644
+    #text = 0x405172ba
 
     print(hex(key))
     print(hex(text))

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1570013507" />
+    <testcase classname="key_schedule_test" name="run_test_001" ratio_time="56712946039406.2" sim_time_ns="3351000000000.0" time="0.05908703804016113" />
+    <testcase classname="key_schedule_test" name="run_test_002" ratio_time="59035995514056.375" sim_time_ns="3351000000000.0" time="0.056761980056762695" />
+    <testcase classname="key_schedule_test" name="run_test_003" ratio_time="57192029004732.39" sim_time_ns="3351000000000.0" time="0.05859208106994629" />
+    <testcase classname="key_schedule_test" name="run_test_004" ratio_time="59341079505009.44" sim_time_ns="3351000000000.0" time="0.05647015571594238" />
+    <testcase classname="key_schedule_test" name="run_test_005" ratio_time="62776306004680.83" sim_time_ns="3351000000000.0" time="0.05338001251220703" />
+    <testcase classname="key_schedule_test" name="run_test_006" ratio_time="63438194876238.96" sim_time_ns="3351000000000.0" time="0.05282306671142578" />
+    <testcase classname="key_schedule_test" name="run_test_007" ratio_time="63539143523625.25" sim_time_ns="3351000000000.0" time="0.05273914337158203" />
+    <testcase classname="key_schedule_test" name="run_test_008" ratio_time="64164826288422.12" sim_time_ns="3351000000000.0" time="0.05222487449645996" />
+    <testcase classname="key_schedule_test" name="run_test_009" ratio_time="65033836313159.36" sim_time_ns="3351000000000.0" time="0.05152702331542969" />
+    <testcase classname="key_schedule_test" name="run_test_010" ratio_time="66377542345746.06" sim_time_ns="3351000000000.0" time="0.05048394203186035" />
+  </testsuite>
+</testsuites>

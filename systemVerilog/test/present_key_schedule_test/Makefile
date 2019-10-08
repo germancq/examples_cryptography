@@ -5,12 +5,13 @@
 #                                                     +:+ +:+         +:+      #
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/09/30 16:15:22 by germancq          #+#    #+#              #
-#    Updated: 2019/09/30 17:14:33 by germancq         ###   ########.fr        #
+#    Created: 2019/10/07 12:55:31 by germancq          #+#    #+#              #
+#    Updated: 2019/10/07 12:55:35 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 VERILOG_SOURCES = ../../rtl/present.sv \
+				  ../../rtl/present_misc.sv \
 				  ../../rtl/register.sv \
 				  ../../rtl/memory_module.sv \
 				  ../../rtl/counter.sv	
