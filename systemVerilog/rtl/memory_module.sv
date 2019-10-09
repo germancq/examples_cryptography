@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-09-30 15:33:22
  * @ Modified by: Your name
- * @ Modified time: 2019-10-07 12:37:39
+ * @ Modified time: 2019-10-08 13:24:37
  * @ Description:
  */
 
@@ -14,10 +14,10 @@ module memory_module(
     output logic [DATA_WIDTH-1:0] dout
 );
 
-parameter ADDR = 4;
-parameter DATA_WIDTH = 32;
+parameter ADDR = 5;
+parameter DATA_WIDTH = 64;
 
-logic [2**ADDR-1:0] [DATA_WIDTH-1:0] memory_ ;
+logic [DATA_WIDTH-1:0]  memory_ [2**ADDR-1:0];
 
 
 always_ff @(posedge clk) begin

@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/07 12:55:52 by germancq          #+#    #+#              #
-#    Updated: 2019/10/07 13:38:47 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/08 13:26:01 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -124,7 +124,7 @@ def n_cycles_clock(dut,n):
 def run_test(dut, key = 0):
     key = random.randint(0,(2**32)-1)
     #print(hex(key))
-    key = 0
+    #key = 0
     present_SW = present.Present(key)
     setup_function(dut,key)
     

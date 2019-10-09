@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/25 11:38:14 by germancq          #+#    #+#              #
-#    Updated: 2019/10/01 13:53:48 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/08 12:55:22 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -117,14 +117,14 @@ def update_key(key,round_counter) :
 
 def s_box_enc(state) :
     new_state = 0x0
-    for i in range (0,64/4) :
+    for i in range (0,16) :
         S_indx = (state >> i*4) & 0xF
         new_state = new_state + (S_box[S_indx] << i*4)
     return new_state
 
 def s_box_dec(state) :
     new_state = 0x0
-    for i in range (0,64/4) :
+    for i in range (0,16) :
         S_indx = (state >> i*4) & 0xF
         new_state = new_state + (S_box_dec[S_indx] << i*4)
     return new_state    

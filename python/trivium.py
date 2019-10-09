@@ -116,18 +116,21 @@ def trivium_impl(key,iv,n):
     key = hex(key).rstrip("L")#HEX
     IV = hex(iv).rstrip("L")#HEX
     trivium = Trivium()
+    trivium.rst()
     trivium.Initialization(key,IV)
     trivium.Warm_up()
     s = trivium.gen_keystream(n)
     hex_keystream = '0b' + ''.join(str(i) for i in s[::-1])
+    #print(hex_keystream)
     hex_keystream = BitArray(hex_keystream)
+    #print (hex_keystream.hex)
+    #hex_keystream.byteswap()
     print (hex_keystream.hex)
-    hex_keystream.byteswap()
-    print (hex_keystream.hex)
+    print (hex_keystream.bin)
     return hex_keystream.bin
 
 
 if __name__ == "__main__":
-    trivium_impl(6799,0,128)
+    trivium_impl(0,0,16)
 
 

@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/07 14:13:14 by germancq          #+#    #+#              #
-#    Updated: 2019/10/08 11:34:06 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/08 13:26:28 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -137,8 +137,8 @@ def run_test(dut, key = 0):
     key = random.randint(0,(2**32)-1)
     text = random.randint(0,(2**32)-1)
 
-    #key = 0xb0729644
-    #text = 0x405172ba
+    key = 0x0
+    text = 0x0
 
     print(hex(key))
     print(hex(text))

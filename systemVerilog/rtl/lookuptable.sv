@@ -15,7 +15,7 @@ parameter DATA_WIDTH = 32;
 parameter ADDR_WIDTH = 5;
 parameter FILE_MEM = "/home/germancq/criptografia/examples_cryptography/systemVerilog/fusesoc/orpsoc-cores/systems/trivium_system/rtl/systemVerilog/lookuptable_contents.mem";
 
-logic [2**ADDR_WIDTH - 1 :0] lookup_table_inst [DATA_WIDTH-1:0]; //packed array
+logic [DATA_WIDTH-1:0] lookup_table_inst [2**ADDR_WIDTH - 1 :0]; //packed array
 
 initial begin
     $readmemh(FILE_MEM,lookup_table_inst);

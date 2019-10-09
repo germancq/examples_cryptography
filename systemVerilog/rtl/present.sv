@@ -2,12 +2,13 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-10-07 12:38:55
  * @ Modified by: Your name
- * @ Modified time: 2019-10-07 18:52:15
+ * @ Modified time: 2019-10-08 13:25:45
  * @ Description:
  */
 
 module present(
     input clk,
+    input rst,
     output end_key_generation,
     input [79:0] key,
     input [63:0] block_i,

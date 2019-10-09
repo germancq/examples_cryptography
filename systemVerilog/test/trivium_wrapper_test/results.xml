@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1570619172" />
+    <testcase classname="trivium_wrapper_test" name="run_test_001" ratio_time="39216029228565.6" sim_time_ns="24511000000000.0" time="0.6250250339508057" />
+    <testcase classname="trivium_wrapper_test" name="run_test_002" ratio_time="40112458039320.95" sim_time_ns="24511000000000.0" time="0.6110570430755615" />
+    <testcase classname="trivium_wrapper_test" name="run_test_003" ratio_time="41111632664698.93" sim_time_ns="24511000000000.0" time="0.5962059497833252" />
+    <testcase classname="trivium_wrapper_test" name="run_test_004" ratio_time="41578399926231.375" sim_time_ns="24511000000000.0" time="0.589512825012207" />
+  </testsuite>
+</testsuites>
