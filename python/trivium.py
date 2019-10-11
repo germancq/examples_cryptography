@@ -55,10 +55,10 @@ class Trivium:
         key_ = BitArray(hex=key)
         IV_ = BitArray(hex=IV)
         #print(key_.bin)
-        key_.byteswap()
+        #key_.byteswap()
         #print(key_.bin)
         #print(key_.bin[0])
-        IV_.byteswap()
+        #IV_.byteswap()
 
 
         self.check_len(key_.bin,IV_.bin)

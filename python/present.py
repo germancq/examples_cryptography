@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/25 11:38:14 by germancq          #+#    #+#              #
-#    Updated: 2019/10/08 12:55:22 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/11 12:34:20 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -69,6 +69,9 @@ class Present :
         print(hex(state))
         return state    
     
+
+    def refresh_key(self,key) :
+        self.round_keys = generate_round_keys(key)
 
 
 def generate_round_keys(key) :
@@ -166,7 +169,7 @@ def pLayer_dec(state) :
 
 if __name__ == "__main__":
     #present_impl = Present(0x00000000000000000000)
-    present_impl = Present(0xFFFFFFFFFFFFFFFFFFFF)
+    present_impl = Present(0x4321)
     
     present_impl.encrypt(0x0000000000000000)
     #present_impl.decrypt(0x5579c1387b228445)

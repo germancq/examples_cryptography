@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/09 12:17:36 by germancq          #+#    #+#              #
-#    Updated: 2019/10/09 13:06:10 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/09 13:41:31 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -164,7 +164,8 @@ def n_cycles_clock(dut,n):
 
 @cocotb.coroutine
 def run_test(dut, key = 0 , iv = 0):
-    
+    key = 0x2da9f774
+    iv = 0x420fab91
     expected_value = trivium.trivium_impl(key,iv,64)
     expected_value = int(expected_value,2)
     trivium_SW = trivium.Trivium()
