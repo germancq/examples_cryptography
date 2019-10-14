@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1571059985" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_001" ratio_time="35966127982316.18" sim_time_ns="13011000000000.0" time="0.3617570400238037" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_002" ratio_time="38091524589626.125" sim_time_ns="13011000000000.0" time="0.3415720462799072" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_003" ratio_time="37802122673131.875" sim_time_ns="13011000000000.0" time="0.34418702125549316" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_004" ratio_time="37270976564644.945" sim_time_ns="13011000000000.0" time="0.3490920066833496" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_005" ratio_time="37766569971709.03" sim_time_ns="13011000000000.0" time="0.3445110321044922" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_006" ratio_time="38055770695040.39" sim_time_ns="13011000000000.0" time="0.34189295768737793" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_007" ratio_time="37732179777238.625" sim_time_ns="13011000000000.0" time="0.34482502937316895" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_008" ratio_time="37959073202490.72" sim_time_ns="13011000000000.0" time="0.34276390075683594" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_009" ratio_time="38124575573121.7" sim_time_ns="13011000000000.0" time="0.3412759304046631" />
+    <testcase classname="hirose_present_wrapper_test" name="run_test_010" ratio_time="37948013381777.73" sim_time_ns="13011000000000.0" time="0.3428637981414795" />
+  </testsuite>
+</testsuites>

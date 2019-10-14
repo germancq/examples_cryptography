@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/07 14:13:14 by germancq          #+#    #+#              #
-#    Updated: 2019/10/08 13:26:28 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/14 13:39:56 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,9 +61,12 @@ def rst_function_test(dut):
 @cocotb.coroutine
 def generate_round_keys(dut) :
     dut.rst = 0
+    i = 0
     while dut.end_key_generation.value == 0 :
+        i = i+1
         yield n_cycles_clock(dut,1)
         
+    print(i)    
     #yield n_cycles_clock(dut,1)
             
     if(dut.end_key_generation != 1):
@@ -73,7 +76,7 @@ def generate_round_keys(dut) :
 @cocotb.coroutine
 def enc_dec_test(dut,expected_enc_value,expected_dec_value) :
     
-    
+    i = 0
     while dut.end_enc.value == 0 :
         '''
         print('//////////////////////////')
@@ -88,8 +91,9 @@ def enc_dec_test(dut,expected_enc_value,expected_dec_value) :
         print('//////////////////////////')
         '''
         yield n_cycles_clock(dut,1)
-        
-        
+        i=i+1
+
+    print(i)    
     
     #yield n_cycles_clock(dut,1)
     print(hex(int(dut.block_o.value)))
@@ -137,8 +141,8 @@ def run_test(dut, key = 0):
     key = random.randint(0,(2**32)-1)
     text = random.randint(0,(2**32)-1)
 
-    key = 0x0
-    text = 0x0
+    #key = 0x0
+    #text = 0x0
 
     print(hex(key))
     print(hex(text))

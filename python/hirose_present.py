@@ -6,19 +6,21 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/11 10:39:41 by germancq          #+#    #+#              #
-#    Updated: 2019/10/11 12:31:42 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/14 14:07:31 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 import present
 import math
+import numpy
 
 
 
 class HirosePresent :
     
-    def __init__(self,c):
+    def __init__(self,c,len_value):
         self.c = c 
+        self.len_value = len_value
         self.present_right = present.Present(0x00000000000000000000)
         self.present_left  = present.Present(0x00000000000000000000)
 
@@ -29,9 +31,14 @@ class HirosePresent :
         hr_prev = 0x0000000000000000
         hl_prev = 0x0000000000000000
         
-        print(math.log2(plaintext))
-        i = math.ceil(math.log2(plaintext)/16)
-        print(i)
+        i = 0
+
+        if(self.len_value == 0) :
+            print(numpy.log2(plaintext))
+            i = math.ceil(math.log2(plaintext)/16)
+            print(i)
+        else :
+            i = math.ceil(self.len_value/16)   
         
         while i > 0 :
             print("+++++++++++++++++++++++++++++++++++")
@@ -50,6 +57,7 @@ class HirosePresent :
             self.present_left.refresh_key(key_i)
 
             plaintext_right = self.c ^ hl_prev
+            print(hex(plaintext_right))
             hr_i = self.present_right.encrypt(plaintext_right)
             hr_prev = hr_i ^ plaintext_right
 
@@ -68,6 +76,6 @@ class HirosePresent :
 
 
 if __name__ == "__main__":
-    hirose_present_hash_impl = HirosePresent(0x1234567812345678)
-    hash_value = hirose_present_hash_impl.generate_hash(0x1234567887654321)
+    hirose_present_hash_impl = HirosePresent(0x1111111111111111,32)
+    hash_value = hirose_present_hash_impl.generate_hash(0x0)
     print(hex(hash_value))
