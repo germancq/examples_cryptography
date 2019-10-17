@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/11 10:39:41 by germancq          #+#    #+#              #
-#    Updated: 2019/10/14 14:07:31 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/17 16:08:13 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,48 +34,48 @@ class HirosePresent :
         i = 0
 
         if(self.len_value == 0) :
-            print(numpy.log2(plaintext))
+            #print(numpy.log2(plaintext))
             i = math.ceil(math.log2(plaintext)/16)
-            print(i)
+            #print(i)
         else :
             i = math.ceil(self.len_value/16)   
         
         while i > 0 :
-            print("+++++++++++++++++++++++++++++++++++")
-            print(i)
+            #print("+++++++++++++++++++++++++++++++++++")
+            #print(i)
             i = i - 1
-            print(hex(plaintext))
+            #print(hex(plaintext))
             m_i = plaintext & 0xFFFF
             plaintext = plaintext >> 16
             key_i = (hr_prev << 16) | m_i
-            print(hex(m_i))
-            print(hex(key_i))
-            print(hex(hl_prev))
-            print(hex(hr_prev))
+            #print(hex(m_i))
+            #print(hex(key_i))
+            #print(hex(hl_prev))
+            #print(hex(hr_prev))
 
             self.present_right.refresh_key(key_i)
             self.present_left.refresh_key(key_i)
 
             plaintext_right = self.c ^ hl_prev
-            print(hex(plaintext_right))
+            #print(hex(plaintext_right))
             hr_i = self.present_right.encrypt(plaintext_right)
             hr_prev = hr_i ^ plaintext_right
 
             plaintext_left = hl_prev
             hl_i = self.present_left.encrypt(plaintext_left)
             hl_prev = hl_i ^ plaintext_left
-            print("++++++++++++++++++++++++++++++++++++")
+            #print("++++++++++++++++++++++++++++++++++++")
 
 
-        print("////////////////////////////////")
-        print(hex(hl_prev))
-        print(hex(hr_prev))
+        #print("////////////////////////////////")
+        #print(hex(hl_prev))
+        #print(hex(hr_prev))
         return ((hl_prev<<64) | hr_prev)
       
 
 
 
 if __name__ == "__main__":
-    hirose_present_hash_impl = HirosePresent(0x1111111111111111,32)
+    hirose_present_hash_impl = HirosePresent(0x1234567812345678,64)
     hash_value = hirose_present_hash_impl.generate_hash(0x0)
-    print(hex(hash_value))
+    #print(hex(hash_value))

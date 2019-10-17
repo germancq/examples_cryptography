@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/25 11:38:14 by germancq          #+#    #+#              #
-#    Updated: 2019/10/11 12:34:20 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/17 16:08:38 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ class Present :
     
         state = ciphertext
         
-   
+        #print("////////////////////////////")
 
         for i in range (1,32):
             #print(i)
@@ -46,13 +46,14 @@ class Present :
             
         state = addRoundKey(state,self.round_keys[0])    
 
-        print(hex(state))
+        #print(hex(state))
+        #print("////////////////////////////")
         return state
 
     def encrypt(self,plaintext):
 
         state = plaintext
-        
+        #print("**********************************")
         
         for i in range (1,32):
             #print(i)
@@ -66,7 +67,8 @@ class Present :
             
         state = addRoundKey(state,self.round_keys[31])    
         
-        print(hex(state))
+        #print(hex(state))
+        #print("**********************************")
         return state    
     
 

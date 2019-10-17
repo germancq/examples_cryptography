@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/07 12:55:52 by germancq          #+#    #+#              #
-#    Updated: 2019/10/08 13:26:01 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/17 12:19:23 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,7 +75,8 @@ def generate_round_keys(dut) :
     i = 0
     while dut.end_signal.value == 0 :
         
-        if(dut.current_state == 1) :
+        if(dut.current_state == 5) :
+
             print("**************")
             print(i)
             print(int(dut.counter_output))

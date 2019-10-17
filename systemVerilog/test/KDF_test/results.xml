@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1571324661" />
+    <testcase classname="KDF_test" name="run_test_001" ratio_time="38361062193596.13" sim_time_ns="1282191000000000.0" time="33.424283027648926" />
+  </testsuite>
+</testsuites>
