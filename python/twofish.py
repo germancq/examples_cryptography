@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/21 16:43:56 by germancq          #+#    #+#              #
-#    Updated: 2019/10/28 18:29:40 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/29 12:43:21 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,11 +46,16 @@ class Twofish :
         self.S_i = k[2]
 
     def encrypt(self,plaintext) :    
+        '''
         plaintext_3 = swap32(plaintext & (2**32 - 1))
         plaintext_2 = swap32((plaintext>>32) & (2**32 - 1))
         plaintext_1 = swap32((plaintext>>64) & (2**32 - 1))
         plaintext_0 = swap32((plaintext>>96) & (2**32 - 1))
-        
+        '''
+        plaintext_0 = plaintext & (2**32 - 1)
+        plaintext_1 = (plaintext>>32) & (2**32 - 1)
+        plaintext_2 = (plaintext>>64) & (2**32 - 1)
+        plaintext_3 = (plaintext>>96) & (2**32 - 1)
         print(hex(plaintext_0))
         print(hex(plaintext_1))
         print(hex(plaintext_2))
@@ -93,7 +98,13 @@ class Twofish :
         #print(hex(k_2[1]))
         k_3 = generate_K_values(3,self.M_e,self.M_o)  
         #print(hex(k_3[0]))
-        #print(hex(k_3[1]))   
+        #print(hex(k_3[1]))
+        #
+        print("16") 
+        print(hex(R_0))
+        print(hex(R_1))
+        print(hex(R_2))
+        print(hex(R_3))   
         
         C_0 = R_2 ^ k_2[0]
         C_1 = R_3 ^ k_2[1]
@@ -105,6 +116,69 @@ class Twofish :
         print(hex(C_3))
 
         return (C_3 << 96) + (C_2 << 64) + (C_1 << 32) + C_0 
+
+
+
+    def decrypt(self,ciphertext):
+        ciphertext_0 = ciphertext & (2**32 - 1)
+        ciphertext_1 = (ciphertext>>32) & (2**32 - 1)
+        ciphertext_2 = (ciphertext>>64) & (2**32 - 1)
+        ciphertext_3 = (ciphertext>>96) & (2**32 - 1)
+        print(hex(ciphertext_0))
+        print(hex(ciphertext_1))
+        print(hex(ciphertext_2))
+        print(hex(ciphertext_3))
+
+        k_2 = generate_K_values(2,self.M_e,self.M_o)   
+        k_3 = generate_K_values(3,self.M_e,self.M_o)
+
+        R_0 = ciphertext_0 ^ k_2[0]
+        R_1 = ciphertext_1 ^ k_2[1]
+        R_2 = ciphertext_2 ^ k_3[0]
+        R_3 = ciphertext_3 ^ k_3[1]
+
+        for i in range(0,16):
+            j = 15-i
+            print(j)
+            print("R_values")
+            print(hex(R_0))
+            print(hex(R_1))
+            print(hex(R_2))
+            print(hex(R_3))
+            aux_0 = R_0
+            aux_1 = R_1
+            f = function_F(R_0,R_1,j,self.M_e,self.M_o,self.S_i)
+            
+            R_0 = ROL(R_2,1,32) ^ f[0]
+            #R_0 = ROR(f[0] ^ R_2, 1, 32)
+            R_1 =  ROR(f[1] ^ R_3, 1, 32)     
+            #R_1 = ROL(R_3,1,32) ^ f[1]  
+            R_2 = aux_0
+            R_3 = aux_1
+
+
+        print("-1") 
+        print(hex(R_0))
+        print(hex(R_1))
+        print(hex(R_2))
+        print(hex(R_3))
+
+
+        k_0 = generate_K_values(0,self.M_e,self.M_o)
+        k_1 = generate_K_values(1,self.M_e,self.M_o)
+            
+        C_0 = R_2 ^ k_0[0]
+        C_1 = R_3 ^ k_0[1]
+        C_2 = R_0 ^ k_1[0]
+        C_3 = R_1 ^ k_1[1]
+        print(hex(C_0))
+        print(hex(C_1))
+        print(hex(C_2))
+        print(hex(C_3))
+
+
+        return (C_3 << 96) + (C_2 << 64) + (C_1 << 32) + C_0 
+            
         
         
 def function_F(x,y,round,M_e,M_o,S_i):
@@ -130,6 +204,10 @@ def function_g(x,S_i):
 
 
 def key_schedule(key):
+
+    
+       
+    '''
     m_i = [[] for i in range(8)]
     M_i = []
     S_i = []
@@ -142,9 +220,39 @@ def key_schedule(key):
             
     for i in range(0,8) :
         M_i.append((key >> 32*i) & 0xFFFFFFFF)
-    
-    M_e = [M_i[0],M_i[2]]
-    M_o = [M_i[1],M_i[3]]
+    '''
+    m_i = [[] for i in range(8)]
+    S_i = []
+    s_i = []
+    for i in range(0,2) :
+        for j in range(0,8):
+            x = (key >> (64*i)) & 0xFFFFFFFFFFFFFFFF
+            x = (x >> (j*8)) & 0xFF
+            m_i[i].append(x)
+            
+        r = matrix_multiplication_GF256(RS,m_i[i],0x14D)  
+        
+        s_i.append((r[3][0]<<24) + (r[2][0]<<16) + (r[1][0]<<8) + r[0][0]) 
+
+    key_0 = key & (2**32 - 1)
+    key_1 = (key>>32) & (2**32 - 1)
+    key_2 = (key>>64) & (2**32 - 1)
+    key_3 = (key>>96) & (2**32 - 1)
+
+
+    M_e = [key_0,key_2]
+    M_o = [key_1,key_3]
+    S_i = [s_i[1],s_i[0]]
+
+
+    print("KEY VALUES")
+    print(hex(key_0))
+    print(hex(key_1))
+    print(hex(key_2))
+    print(hex(key_3))
+    print(hex(S_i[0]))
+    print(hex(S_i[1]))
+    print("END KEY VALUES")
 
     
     return (M_e,M_o,S_i) 
@@ -184,7 +292,7 @@ def function_h(X,L):
         #print(hex(y))
         
         if(i != 2):
-            input_x = y ^ L[i]
+            input_x = y ^ L[1-i]
             
         #y = y & (2**32 - 1)
     
@@ -339,14 +447,33 @@ def ROR(x,i,len_bits):
     j = len_bits - i
     return ((x>>i) | (x<<j)) & (2**len_bits - 1)     
 
+def changeEndiannes_128(a):
+    a_3 = swap32(a & (2**32 - 1))
+    a_2 = swap32((a>>32) & (2**32 - 1))
+    a_1 = swap32((a>>64) & (2**32 - 1))
+    a_0 = swap32((a>>96) & (2**32 - 1))
 
+    a_swap = (a_3 << 96) + (a_2 << 64) + (a_1 << 32) + a_0
+
+    return a_swap 
 
 if __name__ == "__main__":
     
-    key = 0x0
-    plaintext = 0xFFFFFFFFFFFFFFFFFFFFFFFF00000001
+    key =       0x9F589F5CF6122C32B6BFEC2F2AE8C35A
+    plaintext = 0x0
+    ciphertext = 0xf3e9b4ffc2b3edc6aa5b4c64b9b24c0d
+
+
+    plaintext = changeEndiannes_128(plaintext)
+    ciphertext = changeEndiannes_128(ciphertext)
+    key = changeEndiannes_128(key)
+
+
+
     cipher = Twofish(key)
     result = cipher.encrypt(plaintext)
+    print("************************************")
+    cipher.decrypt(ciphertext)
     
     #result = galois_multiplication(0x5b,0xfc,0x169)
     #result = matrix_multiplication_GF256(MDS,[0x98,0xCA,0xe0,0xFC],0x169)
@@ -359,3 +486,6 @@ if __name__ == "__main__":
 
     print(hex(z))    
     #print(result)
+
+
+  
