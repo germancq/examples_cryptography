@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/30 15:24:04 by germancq          #+#    #+#              #
-#    Updated: 2019/10/31 12:44:49 by germancq         ###   ########.fr        #
+#    Updated: 2019/10/31 15:35:51 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -74,7 +74,7 @@ def galois_add(a,b) :
 def galois_multiplication(a,b,p):    
     #GF(256)
     t = 0
-    print(hex(b))
+    
     for i in range(0,8):
         mask = 0x1<<i
         bit_b = b & mask
