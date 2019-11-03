@@ -84,18 +84,25 @@ module key_schedule(
     assign RS[30] = 8'h9E;
     assign RS[31] = 8'h03;
 
+    logic [7:0] s0 [3:0];
+    logic [7:0] s1 [3:0];
+
     matrix_multiplication #(.N(8),.COL_A(8),.ROW_A(4),.COL_B(1)) m0(
         .a(RS),
         .b(m_0),
         .p(9'h14D),
-        .s()
+        .s(s0)
     );
     matrix_multiplication #(.N(8),.COL_A(8),.ROW_A(4),.COL_B(1)) m1(
         .a(RS),
         .b(m_1),
         .p(9'h14D),
-        .s()
-    )
+        .s(s1)
+    );
+
+    assign Si[0] = {s0[3],s0[2],s0[1],s0[0]};
+    assign Si[1] = {s1[3],s1[2],s1[1],s1[0]};
+
 
 endmodule : key_schedule
 
