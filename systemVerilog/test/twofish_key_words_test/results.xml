@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1572883267" />
+    <testcase classname="expanded_key_words_test" name="run_test_001" ratio_time="19075199709117.35" sim_time_ns="1601000000000.0" time="0.08393096923828125" />
+    <testcase classname="expanded_key_words_test" name="run_test_002" ratio_time="22803335746643.21" sim_time_ns="1601000000000.0" time="0.07020902633666992" />
+    <testcase classname="expanded_key_words_test" name="run_test_003" ratio_time="23689025583134.605" sim_time_ns="1601000000000.0" time="0.06758403778076172" />
+    <testcase classname="expanded_key_words_test" name="run_test_004" ratio_time="22358709649923.086" sim_time_ns="1601000000000.0" time="0.07160520553588867" />
+    <testcase classname="expanded_key_words_test" name="run_test_005" ratio_time="22433029788968.36" sim_time_ns="1601000000000.0" time="0.07136797904968262" />
+    <testcase classname="expanded_key_words_test" name="run_test_006" ratio_time="21824459689423.633" sim_time_ns="1601000000000.0" time="0.07335805892944336" />
+    <testcase classname="expanded_key_words_test" name="run_test_007" ratio_time="22146633369611.82" sim_time_ns="1601000000000.0" time="0.07229089736938477" />
+    <testcase classname="expanded_key_words_test" name="run_test_008" ratio_time="22752496150927.03" sim_time_ns="1601000000000.0" time="0.07036590576171875" />
+    <testcase classname="expanded_key_words_test" name="run_test_009" ratio_time="22851836476061.16" sim_time_ns="1601000000000.0" time="0.07006001472473145" />
+    <testcase classname="expanded_key_words_test" name="run_test_010" ratio_time="23047920234217.598" sim_time_ns="1601000000000.0" time="0.06946396827697754" />
+  </testsuite>
+</testsuites>

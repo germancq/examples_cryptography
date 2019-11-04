@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1572884990" />
+    <testcase classname="f_function_test" name="run_test_001" ratio_time="13402177661043.74" sim_time_ns="1601000000000.0" time="0.11945819854736328" />
+    <testcase classname="f_function_test" name="run_test_002" ratio_time="13549888220314.701" sim_time_ns="1601000000000.0" time="0.11815595626831055" />
+    <testcase classname="f_function_test" name="run_test_003" ratio_time="13424093717639.627" sim_time_ns="1601000000000.0" time="0.1192631721496582" />
+    <testcase classname="f_function_test" name="run_test_004" ratio_time="13643407873055.863" sim_time_ns="1601000000000.0" time="0.11734604835510254" />
+    <testcase classname="f_function_test" name="run_test_005" ratio_time="13462282413839.42" sim_time_ns="1601000000000.0" time="0.11892485618591309" />
+    <testcase classname="f_function_test" name="run_test_006" ratio_time="13987274553464.49" sim_time_ns="1601000000000.0" time="0.11446118354797363" />
+    <testcase classname="f_function_test" name="run_test_007" ratio_time="13416932312739.639" sim_time_ns="1601000000000.0" time="0.11932682991027832" />
+    <testcase classname="f_function_test" name="run_test_008" ratio_time="13710122101308.725" sim_time_ns="1601000000000.0" time="0.1167750358581543" />
+    <testcase classname="f_function_test" name="run_test_009" ratio_time="13346452458182.281" sim_time_ns="1601000000000.0" time="0.11995697021484375" />
+    <testcase classname="f_function_test" name="run_test_010" ratio_time="13737524787597.71" sim_time_ns="1601000000000.0" time="0.11654210090637207" />
+  </testsuite>
+</testsuites>

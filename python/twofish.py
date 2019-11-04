@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/21 16:43:56 by germancq          #+#    #+#              #
-#    Updated: 2019/10/30 16:35:08 by germancq         ###   ########.fr        #
+#    Updated: 2019/11/04 16:56:51 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -345,10 +345,16 @@ def generate_q_output(q_i,x):
 
 
 def generate_K_values(i,M_e,M_o):
+    print(i)
     p = 2**24 + 2**16 + 2**8 + 2**0
+    print(hex(2*i*p))
+    print(hex((2*i+1)*p))
     A = function_h(2*i*p,M_e)
+    print(hex(A))
     B = function_h((2*i+1)*p,M_o)
+    print(hex(B))
     B = ROL(B,8,32)
+    print(hex(B))
     K_0 = (A+B) % (2**32) #K_2i
     K_1 = (A+(B<<1)) % (2**32)
     K_1 = ROL(K_1,9,32) #K_2i+1
