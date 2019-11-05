@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/21 16:43:56 by germancq          #+#    #+#              #
-#    Updated: 2019/11/04 16:56:51 by germancq         ###   ########.fr        #
+#    Updated: 2019/11/05 13:30:57 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -83,6 +83,7 @@ class Twofish :
             print(hex(R_1))
             print(hex(R_2))
             print(hex(R_3))
+            '''
             aux_0 = R_0
             aux_1 = R_1
             f = function_F(R_0,R_1,i,self.M_e,self.M_o,self.S_i)
@@ -91,6 +92,12 @@ class Twofish :
             R_1 = ROL(R_3,1,32) ^ f[1]  
             R_2 = aux_0
             R_3 = aux_1
+            '''
+            R_values = enc_stage(R_0,R_1,R_2,R_3,self.M_e,self.M_o,self.S_i,i)
+            R_0 = R_values[0]
+            R_1 = R_values[1]
+            R_2 = R_values[2]
+            R_3 = R_values[3]
             
 
         k_2 = generate_K_values(2,self.M_e,self.M_o)   
@@ -145,6 +152,7 @@ class Twofish :
             print(hex(R_1))
             print(hex(R_2))
             print(hex(R_3))
+            '''
             aux_0 = R_0
             aux_1 = R_1
             f = function_F(R_0,R_1,j,self.M_e,self.M_o,self.S_i)
@@ -155,7 +163,12 @@ class Twofish :
             #R_1 = ROL(R_3,1,32) ^ f[1]  
             R_2 = aux_0
             R_3 = aux_1
-
+            '''
+            R_values = dec_stage(R_0,R_1,R_2,R_3,self.M_e,self.M_o,self.S_i,j)
+            R_0 = R_values[0]
+            R_1 = R_values[1]
+            R_2 = R_values[2]
+            R_3 = R_values[3]
 
         print("-1") 
         print(hex(R_0))
@@ -179,7 +192,33 @@ class Twofish :
 
         return (C_3 << 96) + (C_2 << 64) + (C_1 << 32) + C_0 
             
-        
+
+
+def enc_stage(R_0,R_1,R_2,R_3,M_e,M_o,S_i,i):
+    aux_0 = R_0
+    aux_1 = R_1
+    f = function_F(R_0,R_1,i,M_e,M_o,S_i)
+    
+    R_0 = ROR(f[0] ^ R_2, 1, 32)      
+    R_1 = ROL(R_3,1,32) ^ f[1]  
+    R_2 = aux_0
+    R_3 = aux_1
+    return (R_0,R_1,R_2,R_3)
+
+
+def dec_stage(R_0,R_1,R_2,R_3,M_e,M_o,S_i,j):
+    aux_0 = R_0
+    aux_1 = R_1
+    f = function_F(R_0,R_1,j,M_e,M_o,S_i)
+    
+    R_0 = ROL(R_2,1,32) ^ f[0]
+    #R_0 = ROR(f[0] ^ R_2, 1, 32)
+    R_1 =  ROR(f[1] ^ R_3, 1, 32)     
+    #R_1 = ROL(R_3,1,32) ^ f[1]  
+    R_2 = aux_0
+    R_3 = aux_1
+    return (R_0,R_1,R_2,R_3)
+
         
 def function_F(x,y,round,M_e,M_o,S_i):
 

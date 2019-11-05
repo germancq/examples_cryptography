@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-10-31 16:03:20
  * @ Modified by: Your name
- * @ Modified time: 2019-11-04 18:09:38
+ * @ Modified time: 2019-11-05 13:46:08
  * @ Description:
  */
 
@@ -13,12 +13,12 @@ module twofish(
     input [127:0] key,
     input [127:0] text_input,
     output [127:0] text_output,
-    output end_signal
+    output logic end_signal
 );
 
-    wire [31:0] Me [1:0],
-    wire [31:0] Mo [1:0],
-    wire [31:0] Si [1:0]
+    wire [31:0] Me [1:0];
+    wire [31:0] Mo [1:0];
+    wire [31:0] Si [1:0];
 
     key_schedule key_schedule_impl(
         .key(key),
@@ -71,17 +71,66 @@ module twofish(
 
 
     //Reg for R0,R1,R2,R3
+    logic [31:0] R0;
+    logic [31:0] R1;
+    logic [31:0] R2;
+    logic [31:0] R3;
+
+    logic [31:0] R0_input;
+    logic R0_w;
+    logic R0_cl;
+
+    register #(.DATA_WIDTH(32)) R0_reg(
+        .clk(clk),
+        .cl(R0_cl),
+        .w(R0_w),
+        .din(R0_input),
+        .dout(R0)
+    );
+
+    logic [31:0] R1_input;
+    logic R1_w;
+    logic R1_cl;
+
+    register #(.DATA_WIDTH(32)) R1_reg(
+        .clk(clk),
+        .cl(R1_cl),
+        .w(R1_w),
+        .din(R1_input),
+        .dout(R1)
+    );
+
+    logic [31:0] R2_input;
+    logic R2_w;
+    logic R2_cl;
+
+    register #(.DATA_WIDTH(32)) R2_reg(
+        .clk(clk),
+        .cl(R2_cl),
+        .w(R2_w),
+        .din(R2_input),
+        .dout(R2)
+    );
+
+    logic [31:0] R3_input;
+    logic R3_w;
+    logic R3_cl;
+
+    register #(.DATA_WIDTH(32)) R3_reg(
+        .clk(clk),
+        .cl(R3_cl),
+        .w(R3_w),
+        .din(R3_input),
+        .dout(R3)
+    );
+
     
-
-
-    //stage
-
 
     //contador
     logic [7:0] counter_in;
     mux2 #(.N(8)) mux_0(
         .a(8'h0),
-        .b(8'h15),
+        .b(8'hF),
         .sel(enc_dec),
         .c(counter_in)
     );
@@ -97,7 +146,166 @@ module twofish(
         .dout(counter_out)
     );
 
+
+    //stage
+    logic [31:0] Z0;
+    logic [31:0] Z1;
+    logic [31:0] Z2;
+    logic [31:0] Z3;
+
+    twofish_stage stage_impl(
+        .enc_dec(enc_dec), //enc = 0, dec = 1
+        .i(counter_out),
+        .Me(Me),
+        .Mo(Mo),
+        .Si(Si),
+        .R0(R0),
+        .R1(R1),
+        .R2(R2),
+        .R3(R3),
+        .Z0(Z0),
+        .Z1(Z1),
+        .Z2(Z2),
+        .Z3(Z3)
+    );
+
+    //
+
+    assign text_output = {R3,R2,R1,R0};
+
     //FSM
+    typedef enum logic [2:0] {IDLE,INPUT_ENC,INPUT_DEC,TWOFISH_STAGE,OUTPUT_ENC,OUTPUT_DEC,END} state_t;
+    state_t current_state, next_state;
+
+
+    always_comb begin
+
+        next_state = current_state;
+        
+        down_counter = 0;
+        up_counter = 0;
+        R0_w = 0;
+        R0_cl = 0;
+        R1_w = 0;
+        R1_cl = 0;
+        R2_w = 0;
+        R2_cl = 0;
+        R3_w  = 0;
+        R3_cl = 0;
+        R0_input = Z0;
+        R1_input = Z1;
+        R2_input = Z2;
+        R3_input = Z3;
+        end_signal = 0;
+
+        case(current_state)
+            IDLE : 
+                begin
+                    
+                    R0_cl = 1'b1;
+                    R1_cl = 1'b1;
+                    R2_cl = 1'b1;
+                    R3_cl = 1'b1;
+
+                    if(enc_dec == 1'b1) begin
+                        next_state = INPUT_DEC;
+                    end
+                    else begin
+                        next_state = INPUT_ENC;
+                    end    
+                    
+                    
+                end  
+            INPUT_ENC :
+                begin
+                    R0_input = text_input[31:0] ^ K0;
+                    R1_input = text_input[63:32] ^ K1;
+                    R2_input = text_input[95:64] ^ K2;
+                    R3_input = text_input[127:96] ^ K3;
+                    R0_w = 1'b1;
+                    R1_w = 1'b1;
+                    R2_w = 1'b1;
+                    R3_w = 1'b1;
+                    next_state = TWOFISH_STAGE;
+                end
+            INPUT_DEC :
+                begin
+                    R0_input = text_input[31:0] ^ K4;
+                    R1_input = text_input[63:32] ^ K5;
+                    R2_input = text_input[95:64] ^ K6;
+                    R3_input = text_input[127:96] ^ K7;
+                    R0_w = 1'b1;
+                    R1_w = 1'b1;
+                    R2_w = 1'b1;
+                    R3_w = 1'b1;
+                    next_state = TWOFISH_STAGE;
+                end    
+            TWOFISH_STAGE :
+                begin
+                    R0_w = 1'b1;
+                    R1_w = 1'b1;
+                    R2_w = 1'b1;
+                    R3_w = 1'b1;
+                    if(enc_dec == 1'b1) begin
+                        down_counter = 1'b1;
+                        if(counter_out == 8'h0) begin
+                            next_state = OUTPUT_DEC;
+                        end
+                    end
+                    else begin
+                        
+                        up_counter = 1'b1;
+                        if(counter_out == 8'hF) begin
+                            next_state = OUTPUT_ENC;
+                        end
+                    end
+                    
+                end
+
+            OUTPUT_ENC : 
+                begin
+                    R0_input = R2 ^ K4;
+                    R1_input = R3 ^ K5;
+                    R2_input = R0 ^ K6;
+                    R3_input = R1 ^ K7;
+                    R0_w = 1'b1;
+                    R1_w = 1'b1;
+                    R2_w = 1'b1;
+                    R3_w = 1'b1;
+                    next_state = END;
+                end
+
+            OUTPUT_DEC : 
+                begin
+                    R0_input = R2 ^ K0;
+                    R1_input = R3 ^ K1;
+                    R2_input = R0 ^ K2;
+                    R3_input = R1 ^ K3;
+                    R0_w = 1'b1;
+                    R1_w = 1'b1;
+                    R2_w = 1'b1;
+                    R3_w = 1'b1;
+                    next_state = END;
+                end    
+
+            END :
+                begin
+                    end_signal = 1'b1;
+                end    
+
+        endcase
+    end
+
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            current_state <= IDLE;
+        end
+        else begin
+            current_state <= next_state;
+        end
+    end
+
 
 endmodule : twofish
 
@@ -107,7 +315,7 @@ module twofish_stage(
     input [7:0] i,
     input [31:0] Me [1:0],
     input [31:0] Mo [1:0],
-    input [31:0] Si [1:0]
+    input [31:0] Si [1:0],
     input [31:0] R0,
     input [31:0] R1,
     input [31:0] R2,
@@ -132,8 +340,8 @@ module twofish_stage(
         .F1(F1)
     );
 
-    logic [32:0] Z0_input_0;
-    logic [32:0] Z0_output_0;
+    wire [31:0] Z0_input_0;
+    logic [31:0] Z0_output_0;
 
     mux2 #(.N(32)) m0(
         .a(R2),
@@ -143,29 +351,34 @@ module twofish_stage(
     );
 
     //assign Z0_input_0 = enc_dec == 1'b1 ? {R2[30:0],R2[31]} : R2;
-
     galois_adder #(.N(32)) a1(
         .a(F0),
         .b(Z0_input_0),
         .s(Z0_output_0)
     );
 
-    logic [32:0] Z1_input_0;
-    logic [32:0] Z1_output_0;
+    
+
+    logic [31:0] Z1_input_0;
+    logic [31:0] Z1_output_0;
     //assign Z1_input_0 = enc_dec == 1'b1 ? R3 : {R3[30:0],R3[31]};
 
     mux2 #(.N(32)) m1(
         .a({R3[30:0],R3[31]}),
         .b(R3),
         .sel(enc_dec),
-        .c(Z0_input_0)
+        .c(Z1_input_0)
     );
-
     galois_adder #(.N(32)) a2(
         .a(F1),
         .b(Z1_input_0),
         .s(Z1_output_0)
     );
+    
+    
+
+
+
 
     mux2 #(.N(32)) m3(
         .a({Z0_output_0[0],Z0_output_0[31:1]}),
