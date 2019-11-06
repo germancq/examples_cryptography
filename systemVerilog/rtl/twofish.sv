@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-10-31 16:03:20
  * @ Modified by: Your name
- * @ Modified time: 2019-11-05 13:46:08
+ * @ Modified time: 2019-11-06 13:48:01
  * @ Description:
  */
 
@@ -124,6 +124,61 @@ module twofish(
         .dout(R3)
     );
 
+
+    //Reg for Z0,Z1,Z2,Z3
+    logic [31:0] Z0;
+    logic [31:0] Z1;
+    logic [31:0] Z2;
+    logic [31:0] Z3;
+
+    logic [31:0] Z0_output;
+    logic Z0_w;
+    logic Z0_cl;
+
+    register #(.DATA_WIDTH(32)) Z0_reg(
+        .clk(clk),
+        .cl(Z0_cl),
+        .w(Z0_w),
+        .din(Z0),
+        .dout(Z0_output)
+    );
+
+    logic [31:0] Z1_output;
+    logic Z1_w;
+    logic Z1_cl;
+
+    register #(.DATA_WIDTH(32)) Z1_reg(
+        .clk(clk),
+        .cl(Z1_cl),
+        .w(Z1_w),
+        .din(Z1),
+        .dout(Z1_output)
+    );
+
+    logic [31:0] Z2_output;
+    logic Z2_w;
+    logic Z2_cl;
+
+    register #(.DATA_WIDTH(32)) Z2_reg(
+        .clk(clk),
+        .cl(Z2_cl),
+        .w(Z2_w),
+        .din(Z2),
+        .dout(Z2_output)
+    );
+
+    logic [31:0] Z3_output;
+    logic Z3_w;
+    logic Z3_cl;
+
+    register #(.DATA_WIDTH(32)) Z3_reg(
+        .clk(clk),
+        .cl(Z3_cl),
+        .w(Z3_w),
+        .din(Z3),
+        .dout(Z3_output)
+    );
+
     
 
     //contador
@@ -148,10 +203,6 @@ module twofish(
 
 
     //stage
-    logic [31:0] Z0;
-    logic [31:0] Z1;
-    logic [31:0] Z2;
-    logic [31:0] Z3;
 
     twofish_stage stage_impl(
         .enc_dec(enc_dec), //enc = 0, dec = 1
@@ -174,7 +225,7 @@ module twofish(
     assign text_output = {R3,R2,R1,R0};
 
     //FSM
-    typedef enum logic [2:0] {IDLE,INPUT_ENC,INPUT_DEC,TWOFISH_STAGE,OUTPUT_ENC,OUTPUT_DEC,END} state_t;
+    typedef enum logic [3:0] {IDLE,INPUT_ENC,INPUT_DEC,STORE_OUTPUTS,UPDATE_INPUTS,WAIT_CHECK_FINAL,OUTPUT_ENC,OUTPUT_DEC,END} state_t;
     state_t current_state, next_state;
 
 
@@ -192,10 +243,18 @@ module twofish(
         R2_cl = 0;
         R3_w  = 0;
         R3_cl = 0;
-        R0_input = Z0;
-        R1_input = Z1;
-        R2_input = Z2;
-        R3_input = Z3;
+        Z0_w = 0;
+        Z0_cl = 0;
+        Z1_w = 0;
+        Z1_cl = 0;
+        Z2_w = 0;
+        Z2_cl = 0;
+        Z3_w  = 0;
+        Z3_cl = 0;
+        R0_input = 0;
+        R1_input = 0;
+        R2_input = 0;
+        R3_input = 0;
         end_signal = 0;
 
         case(current_state)
@@ -206,6 +265,10 @@ module twofish(
                     R1_cl = 1'b1;
                     R2_cl = 1'b1;
                     R3_cl = 1'b1;
+                    Z0_cl = 1'b1;
+                    Z1_cl = 1'b1;
+                    Z2_cl = 1'b1;
+                    Z3_cl = 1'b1;
 
                     if(enc_dec == 1'b1) begin
                         next_state = INPUT_DEC;
@@ -226,7 +289,7 @@ module twofish(
                     R1_w = 1'b1;
                     R2_w = 1'b1;
                     R3_w = 1'b1;
-                    next_state = TWOFISH_STAGE;
+                    next_state = WAIT_CHECK_FINAL;
                 end
             INPUT_DEC :
                 begin
@@ -238,29 +301,48 @@ module twofish(
                     R1_w = 1'b1;
                     R2_w = 1'b1;
                     R3_w = 1'b1;
-                    next_state = TWOFISH_STAGE;
+                    next_state = WAIT_CHECK_FINAL;
                 end    
-            TWOFISH_STAGE :
+            STORE_OUTPUTS :
                 begin
+                    Z0_w = 1'b1;
+                    Z1_w = 1'b1;
+                    Z2_w = 1'b1;
+                    Z3_w = 1'b1;
+                    next_state = UPDATE_INPUTS;
+                    
+                end
+            UPDATE_INPUTS :
+                begin
+                    R0_input = Z0_output;
+                    R1_input = Z1_output;
+                    R2_input = Z2_output;
+                    R3_input = Z3_output;
                     R0_w = 1'b1;
                     R1_w = 1'b1;
                     R2_w = 1'b1;
                     R3_w = 1'b1;
+                    next_state = WAIT_CHECK_FINAL;
                     if(enc_dec == 1'b1) begin
                         down_counter = 1'b1;
                         if(counter_out == 8'h0) begin
                             next_state = OUTPUT_DEC;
                         end
-                    end
-                    else begin
                         
+                    end
+                    else begin  
                         up_counter = 1'b1;
                         if(counter_out == 8'hF) begin
                             next_state = OUTPUT_ENC;
                         end
                     end
+                end  
+            WAIT_CHECK_FINAL :
+                begin
+                    next_state = STORE_OUTPUTS;
                     
-                end
+                    
+                end      
 
             OUTPUT_ENC : 
                 begin

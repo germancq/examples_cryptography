@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/21 16:43:56 by germancq          #+#    #+#              #
-#    Updated: 2019/11/05 13:30:57 by germancq         ###   ########.fr        #
+#    Updated: 2019/11/06 11:29:24 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,10 +56,10 @@ class Twofish :
         plaintext_1 = (plaintext>>32) & (2**32 - 1)
         plaintext_2 = (plaintext>>64) & (2**32 - 1)
         plaintext_3 = (plaintext>>96) & (2**32 - 1)
-        print(hex(plaintext_0))
-        print(hex(plaintext_1))
-        print(hex(plaintext_2))
-        print(hex(plaintext_3))
+        #print(hex(plaintext_0))
+        #print(hex(plaintext_1))
+        #print(hex(plaintext_2))
+        #print(hex(plaintext_3))
 
         k_0 = generate_K_values(0,self.M_e,self.M_o)
         #print(hex(k_0[0]))
@@ -77,12 +77,14 @@ class Twofish :
 
         
         for i in range(0,16):
+            '''
             print(i)
             print("R_values")
             print(hex(R_0))
             print(hex(R_1))
             print(hex(R_2))
             print(hex(R_3))
+            '''
             '''
             aux_0 = R_0
             aux_1 = R_1
@@ -107,21 +109,23 @@ class Twofish :
         #print(hex(k_3[0]))
         #print(hex(k_3[1]))
         #
+        '''
         print("16") 
         print(hex(R_0))
         print(hex(R_1))
         print(hex(R_2))
         print(hex(R_3))   
-        
+        '''
         C_0 = R_2 ^ k_2[0]
         C_1 = R_3 ^ k_2[1]
         C_2 = R_0 ^ k_3[0]
         C_3 = R_1 ^ k_3[1]
+        '''
         print(hex(C_0))
         print(hex(C_1))
         print(hex(C_2))
         print(hex(C_3))
-
+        '''
         return (C_3 << 96) + (C_2 << 64) + (C_1 << 32) + C_0 
 
 
@@ -131,10 +135,10 @@ class Twofish :
         ciphertext_1 = (ciphertext>>32) & (2**32 - 1)
         ciphertext_2 = (ciphertext>>64) & (2**32 - 1)
         ciphertext_3 = (ciphertext>>96) & (2**32 - 1)
-        print(hex(ciphertext_0))
-        print(hex(ciphertext_1))
-        print(hex(ciphertext_2))
-        print(hex(ciphertext_3))
+        #print(hex(ciphertext_0))
+        #print(hex(ciphertext_1))
+        #print(hex(ciphertext_2))
+        #print(hex(ciphertext_3))
 
         k_2 = generate_K_values(2,self.M_e,self.M_o)   
         k_3 = generate_K_values(3,self.M_e,self.M_o)
@@ -146,12 +150,14 @@ class Twofish :
 
         for i in range(0,16):
             j = 15-i
+            '''
             print(j)
             print("R_values")
             print(hex(R_0))
             print(hex(R_1))
             print(hex(R_2))
             print(hex(R_3))
+            '''
             '''
             aux_0 = R_0
             aux_1 = R_1
@@ -170,11 +176,11 @@ class Twofish :
             R_2 = R_values[2]
             R_3 = R_values[3]
 
-        print("-1") 
-        print(hex(R_0))
-        print(hex(R_1))
-        print(hex(R_2))
-        print(hex(R_3))
+        #print("-1") 
+        #print(hex(R_0))
+        #print(hex(R_1))
+        #print(hex(R_2))
+        #print(hex(R_3))
 
 
         k_0 = generate_K_values(0,self.M_e,self.M_o)
@@ -184,10 +190,10 @@ class Twofish :
         C_1 = R_3 ^ k_0[1]
         C_2 = R_0 ^ k_1[0]
         C_3 = R_1 ^ k_1[1]
-        print(hex(C_0))
-        print(hex(C_1))
-        print(hex(C_2))
-        print(hex(C_3))
+        #print(hex(C_0))
+        #print(hex(C_1))
+        #print(hex(C_2))
+        #print(hex(C_3))
 
 
         return (C_3 << 96) + (C_2 << 64) + (C_1 << 32) + C_0 
@@ -226,11 +232,11 @@ def function_F(x,y,round,M_e,M_o,S_i):
     y = ROL(y,8,32)
     T1 = function_g(y,S_i)
     K_r = generate_K_values(round+4,M_e,M_o)
-    print("T_values")
+    #print("T_values")
     #print(round)
     
-    print(hex(T0))
-    print(hex(T1))
+    #print(hex(T0))
+    #print(hex(T1))
     F0 = (T0 + T1 + K_r[0]) & (2**32 - 1)
     F1 = (T0 + (T1<<1) + K_r[1]) & (2**32 - 1)
     return (F0,F1)
@@ -283,7 +289,7 @@ def key_schedule(key):
     M_o = [key_1,key_3]
     S_i = [s_i[1],s_i[0]]
 
-
+    '''
     print("KEY VALUES")
     print(hex(key_0))
     print(hex(key_1))
@@ -292,7 +298,7 @@ def key_schedule(key):
     print(hex(S_i[0]))
     print(hex(S_i[1]))
     print("END KEY VALUES")
-
+    '''
     
     return (M_e,M_o,S_i) 
 
@@ -384,16 +390,16 @@ def generate_q_output(q_i,x):
 
 
 def generate_K_values(i,M_e,M_o):
-    print(i)
+    #print(i)
     p = 2**24 + 2**16 + 2**8 + 2**0
-    print(hex(2*i*p))
-    print(hex((2*i+1)*p))
+    #print(hex(2*i*p))
+    #print(hex((2*i+1)*p))
     A = function_h(2*i*p,M_e)
-    print(hex(A))
+    #print(hex(A))
     B = function_h((2*i+1)*p,M_o)
-    print(hex(B))
+    #print(hex(B))
     B = ROL(B,8,32)
-    print(hex(B))
+    #print(hex(B))
     K_0 = (A+B) % (2**32) #K_2i
     K_1 = (A+(B<<1)) % (2**32)
     K_1 = ROL(K_1,9,32) #K_2i+1
