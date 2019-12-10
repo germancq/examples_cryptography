@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/05 16:16:32 by germancq          #+#    #+#              #
-#    Updated: 2019/12/05 16:59:45 by germancq         ###   ########.fr        #
+#    Updated: 2019/12/10 17:07:09 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ class LFSR :
         return self.state
 
     def step(self) :
-        bits_selected = self.state & self.fc
+        bits_selected = self.state & (self.fc >> 1)
         output_bit = 0
         for i in range(0,self.n):
             output_bit = output_bit ^ ((bits_selected >> i) & 0x1)  

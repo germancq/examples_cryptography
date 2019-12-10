@@ -12,6 +12,8 @@
 
 import LFSR
 import math
+import struct
+import numpy as np
 
 S_box = [0xE,0xD,0xB,0x0,0x2,0x1,0x4,0xF,0x7,0xA,0x8,0x5,0x9,0xC,0x3,0x6]
 
@@ -29,9 +31,9 @@ class Spongent:
 
     def generate_hash(self,message):
         self.initialization_phase(message)
-        self.absorbing_phase()
-        self.squeezing_phase()
-        return self.result
+        s = self.absorbing_phase()
+        print(hex(s))
+        return self.squeezing_phase(s)
 
 
     def initialization_phase(self,message):
@@ -39,32 +41,54 @@ class Spongent:
         message = message << 1
         message = message | 0x1
         #fill with zeros until r multiple
-        n = message.bit_length() % self.r
-        message = message << n
+        bit_len_msg = math.floor(math.log2(message)) + 1
+        print(bit_len_msg)
+        n = bit_len_msg % self.r
+        message = message << (self.r - n)
         #cut into blocks of r bits
+        print(hex(message))
+
         self.m = []
         self.mask = 0xFFFF
-        if(self.n <= 160):
+        if(self.r == 8):
             self.mask = 0xFF
-            
-        for i in range(0,(message.bit_length()/self.r)):
-            self.m.append(((message >> (self.r * i)) & mask)) 
-        
 
+        
+            
+        for i in range(0,int(bit_len_msg/self.r)+1):
+            message_part = ((message >> (self.r * i)) & self.mask)      
+            if(self.r == 16):
+                message_part = (message_part >> 8) | ((message_part & 0XFF) << 8)         
+            self.m.append(message_part) 
+        
+        
+        
 
     def absorbing_phase(self):
+        state = 0
         for i in range(0,len(self.m)):
-            self.state = self.state ^ self.m[i]
-            self.permutation()
+            block_value = self.m[len(self.m)-1-i]
+            state = state ^ block_value
+            print(hex(state))
+            state = self.permutation(state)
+            
+            
+        return state   
         
 
 
-    def squeezing_phase(self):
-        self.result = 0
-        for i in range(0, self.n/self.r):
-           self.result = ((self.state & self.mask)<<(i*self.r)) | result     
-           self.permutation()
+    def squeezing_phase(self,state):
+        result = 0
+        for i in range(0, int(self.n/self.r)):
+           value = state & self.mask
+           if(self.r == 16):
+               value = (value >> 8) | ((value & 0XFF) << 8)   
+           result = value | result   
+           result = result << self.r
+           print(hex(result))  
+           state = self.permutation(state)
 
+        return result>>self.r
 
     def initialize_lCounter(self):
         size = math.ceil(math.log2(self.R))
@@ -91,42 +115,57 @@ class Spongent:
         self.lCounter = LFSR.LFSR(size,self.initial_lCounter_state,feedback_coefficients)
 
 
-    def permutation(self):
+    def permutation(self,state):
         self.lCounter.set_state(self.initial_lCounter_state)
         for i in range (0,self.R):
-            reverse_counter = reverse_bits(self.lCounter.get_state())
-            self.state = self.state ^ reverse_counter ^ self.lCounter.get_state()
-            self.lCounter.step()
-            self.sBoxLayer()
-            self.pLayer()
-     
+            reverse_counter = self.reverse_bits(self.lCounter.get_state(),self.lCounter.n)
+            state = state ^ (reverse_counter << (self.b - self.lCounter.n)) ^ self.lCounter.get_state()
+            self.lCounter.step() 
+            state = self.sBoxLayer(state)   
+            state = self.pLayer(state)
+            
+            
+
+        return state
     
-    def reverse_bits(self,data):
+    def reverse_bits(self,data,bits):
         result = 0
-        for i in range (0,data.bit_length()):
-           result = (((data>>(data.bit_length-i-1)) & 0x1))<<i | result
+        for i in range (0,bits):
+           result = (((data>>(bits-i-1)) & 0x1))<<i | result
+        return result   
                     
-    def sBoxLayer(self):
+    def sBoxLayer(self,state):
         new_state = 0
-        for i in range(0,self.b/4):
-            index = (self.state >> 4*i) & 0xF    
+        for i in range(0,int(self.b/4)):
+            index = (state >> 4*i) & 0xF    
             new_state = (S_box[index]<<4*i) | new_state
         
-        self.state = new_state   
+        return new_state   
         
-    def pLayer(self):
+    def pLayer(self,state):
         new_state = 0
-        for i in range (0,b): 
-            bit_pos = i * (self.b/4)
-            if(i == b-1):
+        for i in range (0,self.b): 
+            bit_pos = int(i * (self.b/4)) % (self.b-1)
+            if(i == self.b-1):
                 bit_pos = i
-            value_bit = (self.state >> i) & 0x1
+            value_bit = (state >> i) & 0x1
             new_state = (value_bit << bit_pos) | new_state
             
-        self.state = new_state
+        return new_state
                 
-                    
+
+                
 
 
 if __name__ == "__main__":
     print()    
+    spongent_impl = Spongent(256,256,16,140)
+    
+    message = 0x53706F6E6765202B2050726573656E74203D2053706F6E67656E7
+    print(message)
+    print(hex(message))
+
+    hash_value = spongent_impl.generate_hash(message)
+    
+    print(hash_value)
+    print(hex(hash_value))
