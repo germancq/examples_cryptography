@@ -118,15 +118,23 @@ class Spongent:
     def permutation(self,state):
         self.lCounter.set_state(self.initial_lCounter_state)
         for i in range (0,self.R):
-            reverse_counter = self.reverse_bits(self.lCounter.get_state(),self.lCounter.n)
-            state = state ^ (reverse_counter << (self.b - self.lCounter.n)) ^ self.lCounter.get_state()
-            self.lCounter.step() 
-            state = self.sBoxLayer(state)   
-            state = self.pLayer(state)
+            state = self.iteration_permutation(state)
             
-            
-
         return state
+
+    def iteration_permutation(self,state):
+        reverse_counter = self.reverse_bits(self.lCounter.get_state(),self.lCounter.n)
+
+        state = state ^ (reverse_counter << (self.b - self.lCounter.n)) ^ self.lCounter.get_state()
+        
+
+        self.lCounter.step() 
+        
+        state = self.sBoxLayer(state)   
+        
+        state = self.pLayer(state)
+        
+        return state    
     
     def reverse_bits(self,data,bits):
         result = 0
@@ -159,7 +167,7 @@ class Spongent:
 
 if __name__ == "__main__":
     print()    
-    spongent_impl = Spongent(256,256,16,140)
+    spongent_impl = Spongent(88,80,8,45)
     
     message = 0x53706F6E6765202B2050726573656E74203D2053706F6E67656E7
     print(message)

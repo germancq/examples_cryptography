@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-12-16 13:06:12
  * @ Modified by: Your name
- * @ Modified time: 2019-12-16 17:43:37
+ * @ Modified time: 2019-12-17 19:07:49
  * @ Description:
  */
 
@@ -10,19 +10,128 @@ module spongent #(
     parameter N = 88,
     parameter c = 80,
     parameter r = 8,
+    parameter R = 45,
     parameter lCounter_initial_state = 6'h5,
     parameter lCounter_feedback_coeff = 7'h61,
     parameter DATA_WIDTH = 256
 )
 (
-
+    input clk,
+    input rst,
+    input [DATA_WIDTH-1:0] msg,
+    output [N-1:0] hash,
+    output end_hash
 );
     parameter b = c+r;
 
-    
+    logic rst_lCounter;
+    logic shift_lCounter;
+    logic [$clog2(R)-1:0] lCounter_state;
+
+    LFSR #(.DATA_WIDTH($clog2(R))) lCounter(
+        .clk(clk),
+        .rst(rst_lCounter),
+        .shift(shift_lCounter),
+        .feedback_coeff(lCounter_feedback_coeff),
+        .initial_state(lCounter_initial_state),
+        .state(lCounter_state)
+    );
+
+    logic [b-1:0] permutation_state;
+    logic [b-1:0] permutation_initial_state;
+    logic end_permutation;
+    logic rst_permutation;
+
+    permutation #(.DATA_WIDTH(b),.R(R)) permutation_impl(
+        .clk(clk),
+        .rst(rst_permutation),
+        .initial_state(permutation_initial_state),
+        .lCounter_state(lCounter_state),
+        .rst_lCounter(rst_lCounter),
+        .shift_lCounter(shift_lCounter),
+        .end_permutation(end_permutation),
+        .state(permutation_state)
+    );
+
+    logic [DATA_WIDTH-1+(r - (DATA_WIDTH % r)):0] padded_msg;
+    assign padded_msg = msg << (r - (DATA_WIDTH % r)) | 1'b1 << (r - (DATA_WIDTH % r) - 1);
+
+    logic end_absorbing;
+    logic [b-1:0] absorbing_state;
+
+    absorbing_phase #(.DATA_WIDTH(DATA_WIDTH),.b(b),.r(r)) absorbing_phase_impl(
+        .clk(clk),
+        .rst(rst),
+        .end_permutation(end_permutation),
+        .padded_msg(padded_msg),
+        .permutation_state(permutation_state),
+        .rst_permutation(rst_permutation),
+        .permutation_initial_state(permutation_initial_state),
+        .end_absorbing(end_absorbing),
+        .absorbing_state(absorbing_state)  
+    );
 
 endmodule : spongent
 
+
+module absorbing_phase #(
+    parameter DATA_WIDTH = 256,
+    parameter b = 88,
+    parameter r = 8
+)
+(
+    input clk,
+    input rst,
+    input end_permutation,
+    input [DATA_WIDTH-1+(r - (DATA_WIDTH % r)):0] padded_msg,
+    input [b-1:0] permutation_state,
+    output logic rst_permutation,
+    output [b-1:0] permutation_initial_state,
+    output end_absorbing,
+    output logic [b-1:0] absorbing_state
+);
+    
+    
+    logic [$clog2(DATA_WIDTH/r)-1:0] counter_o;
+
+    counter #(.DATA_WIDTH($clog2(DATA_WIDTH/r))) counter_impl(
+        .clk(clk),
+        .rst(rst),
+        .up(end_permutation),
+        .down(1'b0),
+        .din({$clog2(DATA_WIDTH/r){1'b0}}),
+        .dout(counter_o)
+    );
+
+    logic [b-1:0] state;
+    assign state = counter_o == 0 ? 0 : permutation_state;
+
+    assign permutation_initial_state = padded_msg >>(counter_o*r) ^ state;
+
+    assign end_absorbing = counter_o == (DATA_WIDTH/r) ? 1 : 0;
+
+   
+    always_ff @(posedge clk) begin
+        
+        if(rst == 1) begin
+            rst_permutation <= 1;
+            absorbing_state <= {b{1'b0}};
+        end
+        else if(end_absorbing == 1) begin
+            absorbing_state <= state;
+            rst_permutation <= 0;
+        end
+        else if(end_permutation == 1) begin
+            rst_permutation <= 1;
+        end
+        else if(end_permutation == 0) begin
+            rst_permutation <= 0;
+        end
+        
+    end
+
+
+endmodule: absorbing_phase
 
 
 module permutation #(
@@ -32,39 +141,72 @@ module permutation #(
 (
     input clk,
     input rst,
-    input initial_state,
-    input lCounter_state,
+    input [DATA_WIDTH-1:0] initial_state,
+    input [$clog2(R)-1:0] lCounter_state,
     output rst_lCounter,
     output shift_lCounter,
     output end_permutation,
     output [DATA_WIDTH-1:0] state
 );
 
-    //logic stat
+    logic [DATA_WIDTH-1:0] state_reg;
+   
 
-    logic [$clog2(R):0] counter_o;
+    logic [$clog2(R)-1:0] counter_o;
 
-    counter #(.DATA_WIDTH($clog2(R)+1)) (
+    counter #(.DATA_WIDTH($clog2(R))) counter_impl(
         .clk(clk),
         .rst(rst),
         .up(~end_permutation),
         .down(1'b0),
-        .din('{default:0}),
-        .dout()
+        .din({$clog2(R){1'b0}}),
+        .dout(counter_o)
     );
 
     assign rst_lCounter = rst;
     assign end_permutation = counter_o == R ? 1 : 0 ;
     assign shift_lCounter = ~end_permutation;
+    logic [$clog2(R)-1:0] reverse_lCounter;
+
+    genvar i;
+
+    generate
+        for (i = 0;i<$clog2(R) ;i=i+1 ) begin
+            assign reverse_lCounter[i] = lCounter_state[$clog2(R)-1-i];
+        end
+    endgenerate
+
+    
+
+
 
     always_ff @(posedge clk) begin
         if(rst == 1) begin
-            state = initial_state;
+            state_reg <= initial_state;
+        end
+        else if(end_permutation == 0 && counter_o == 0) begin
+            state_reg <= state_reg ^ lCounter_state ^ (reverse_lCounter << (DATA_WIDTH - $clog2(R)));
         end
         else if(end_permutation == 0) begin
-            state = state ^ lCounter_state[:0] ^ (lCounter_state[0:] << );
+            state_reg <= state ^ lCounter_state ^ (reverse_lCounter << (DATA_WIDTH-$clog2(R)));
         end
     end
+
+    logic [DATA_WIDTH-1:0] state_S_box;
+    
+    generate 
+        for (i = 0;i<(DATA_WIDTH>>2);i=i+1) begin
+            S_box s_box_i(
+                .din(state_reg[(i<<2)+3:i<<2]),
+                .dout(state_S_box[(i<<2)+3:i<<2])
+            );
+        end
+    endgenerate
+
+    pLayer #(.DATA_WIDTH(DATA_WIDTH)) pLayer_impl(
+        .din(state_S_box),
+        .dout(state)
+    );
 
 
 endmodule : permutation
@@ -109,8 +251,9 @@ module pLayer #(
     output [DATA_WIDTH-1:0] dout
 );
 
+    genvar i;
     generate
-        for (genvar i = 0;i<DATA_WIDTH-1 ;i=i+1 ) begin
+        for (i = 0;i<DATA_WIDTH-1 ;i=i+1 ) begin
             assign dout[(i * DATA_WIDTH>>2) % (DATA_WIDTH-1)] = din[i];
         end
     endgenerate

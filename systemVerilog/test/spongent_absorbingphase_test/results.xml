@@ -1,0 +1,15 @@
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1576606794" />
+    <testcase classname="spongent_absorbing_test" name="run_test_001" ratio_time="73581139832678.84" sim_time_ns="411000000000.0" time="0.005585670471191406" />
+    <testcase classname="spongent_absorbing_test" name="run_test_002" ratio_time="96563911270445.89" sim_time_ns="411000000000.0" time="0.004256248474121094" />
+    <testcase classname="spongent_absorbing_test" name="run_test_003" ratio_time="99392236162361.62" sim_time_ns="411000000000.0" time="0.0041351318359375" />
+    <testcase classname="spongent_absorbing_test" name="run_test_004" ratio_time="101135755001466.7" sim_time_ns="411000000000.0" time="0.004063844680786133" />
+    <testcase classname="spongent_absorbing_test" name="run_test_005" ratio_time="98461214530500.34" sim_time_ns="411000000000.0" time="0.004174232482910156" />
+    <testcase classname="spongent_absorbing_test" name="run_test_006" ratio_time="98964288650324.36" sim_time_ns="411000000000.0" time="0.004153013229370117" />
+    <testcase classname="spongent_absorbing_test" name="run_test_007" ratio_time="98275978792543.19" sim_time_ns="411000000000.0" time="0.004182100296020508" />
+    <testcase classname="spongent_absorbing_test" name="run_test_008" ratio_time="97702275221038.31" sim_time_ns="411000000000.0" time="0.004206657409667969" />
+    <testcase classname="spongent_absorbing_test" name="run_test_009" ratio_time="96677636924457.4" sim_time_ns="411000000000.0" time="0.004251241683959961" />
+    <testcase classname="spongent_absorbing_test" name="run_test_010" ratio_time="98506225371428.58" sim_time_ns="411000000000.0" time="0.004172325134277344" />
+  </testsuite>
+</testsuites>

@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-12-16 13:52:27
  * @ Modified by: Your name
- * @ Modified time: 2019-12-16 14:31:18
+ * @ Modified time: 2019-12-17 13:51:03
  * @ Description:
  */
 
@@ -26,10 +26,10 @@ module LFSR #(
 
     always_ff @(posedge clk) begin
         if(rst == 1) begin
-            state_reg = initial_state;
+            state_reg <= initial_state;
         end
         else if(shift == 1) begin
-            state_reg = {state_reg[DATA_WIDTH-2:0],bit_xored};
+            state_reg <= {state_reg[DATA_WIDTH-2:0],bit_xored};
         end
     end
 
