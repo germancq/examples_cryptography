@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-12-16 13:06:12
  * @ Modified by: Your name
- * @ Modified time: 2019-12-17 19:07:49
+ * @ Modified time: 2019-12-18 16:25:34
  * @ Description:
  */
 
@@ -11,9 +11,9 @@ module spongent #(
     parameter c = 80,
     parameter r = 8,
     parameter R = 45,
-    parameter lCounter_initial_state = 6'h5,
+    parameter lCounter_initial_state = 6'h05,
     parameter lCounter_feedback_coeff = 7'h61,
-    parameter DATA_WIDTH = 256
+    parameter DATA_WIDTH = 64
 )
 (
     input clk,
@@ -90,42 +90,91 @@ module absorbing_phase #(
     output end_absorbing,
     output logic [b-1:0] absorbing_state
 );
+    localparam DATA_WIDTH_PADDED = DATA_WIDTH + (r - (DATA_WIDTH % r));
     
-    
-    logic [$clog2(DATA_WIDTH/r)-1:0] counter_o;
+    logic [$clog2(DATA_WIDTH_PADDED/r)-1:0] counter_o;
+    logic counter_up;
 
-    counter #(.DATA_WIDTH($clog2(DATA_WIDTH/r))) counter_impl(
+    counter #(.DATA_WIDTH($clog2(DATA_WIDTH_PADDED/r))) counter_impl(
         .clk(clk),
         .rst(rst),
-        .up(end_permutation),
+        .up(counter_up),
         .down(1'b0),
-        .din({$clog2(DATA_WIDTH/r){1'b0}}),
+        .din({$clog2(DATA_WIDTH_PADDED/r){1'b0}}),
         .dout(counter_o)
     );
 
     logic [b-1:0] state;
-    assign state = counter_o == 0 ? 0 : permutation_state;
+    assign absorbing_state = state;
 
-    assign permutation_initial_state = padded_msg >>(counter_o*r) ^ state;
+    logic [r-1:0] msg_chunk;
+    assign msg_chunk = padded_msg >> ((DATA_WIDTH_PADDED/r - counter_o - 1)*r);
+    assign permutation_initial_state = r==8 ? msg_chunk ^ state : {msg_chunk[7:0],msg_chunk[15:8]} ^ state;
 
-    assign end_absorbing = counter_o == (DATA_WIDTH/r) ? 1 : 0;
+    assign end_absorbing = counter_o == (DATA_WIDTH_PADDED/r) ? 1 : 0;
 
-   
+    typedef enum logic [1:0] {IDLE,PERMUTATION,RST_PERMUTATION,END} state_t;
+    state_t current_state, next_state;
+
+    
+
+    always_comb begin
+        next_state = current_state;
+        rst_permutation = 1;
+        counter_up = 0;
+        case(current_state)
+            IDLE : begin
+                next_state = PERMUTATION;
+            end
+            PERMUTATION : begin
+                rst_permutation = 0;
+                if(end_permutation == 1) begin
+                    //store permutation state
+                    counter_up = 1;
+                    next_state = RST_PERMUTATION;
+                end
+            end
+            RST_PERMUTATION : begin
+                next_state = PERMUTATION;
+                if(end_absorbing == 1) begin
+                    next_state = END;
+                end
+            end
+            END : begin
+                
+            end
+            default:;
+        endcase
+    end
+
+    always_ff @(posedge clk) begin
+        case(current_state)
+            IDLE : begin
+                state <= 0;
+            end
+            PERMUTATION : begin
+                if(end_permutation == 1) begin
+                    //store permutation state
+                    state <= permutation_state;
+                end
+            end
+            RST_PERMUTATION : begin
+                
+            end
+            END : begin
+                
+            end
+            default:;
+        endcase
+    end
+
     always_ff @(posedge clk) begin
         
         if(rst == 1) begin
-            rst_permutation <= 1;
-            absorbing_state <= {b{1'b0}};
+            current_state <= IDLE;
         end
-        else if(end_absorbing == 1) begin
-            absorbing_state <= state;
-            rst_permutation <= 0;
-        end
-        else if(end_permutation == 1) begin
-            rst_permutation <= 1;
-        end
-        else if(end_permutation == 0) begin
-            rst_permutation <= 0;
+        else begin
+            current_state <= next_state;
         end
         
     end

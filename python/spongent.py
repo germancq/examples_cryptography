@@ -29,25 +29,28 @@ class Spongent:
         self.initialize_lCounter()
         
 
-    def generate_hash(self,message):
-        self.initialization_phase(message)
+    def generate_hash(self,message, len_msg=0):
+        self.initialization_phase(message,len_msg)
         s = self.absorbing_phase()
         print(hex(s))
         return self.squeezing_phase(s)
 
 
-    def initialization_phase(self,message):
+    def initialization_phase(self,message,len_msg=0):
         #padding message with 1 
         message = message << 1
         message = message | 0x1
         #fill with zeros until r multiple
-        bit_len_msg = math.floor(math.log2(message)) + 1
+        bit_len_msg = len_msg + 1
+        if len_msg == 0:
+            bit_len_msg = math.floor(math.log2(message)) + 1
+
         print(bit_len_msg)
         n = bit_len_msg % self.r
         message = message << (self.r - n)
         #cut into blocks of r bits
-        print(hex(message))
-
+        #print(hex(message))
+        self.padded_msg = message
         self.m = []
         self.mask = 0xFFFF
         if(self.r == 8):
@@ -66,11 +69,22 @@ class Spongent:
 
     def absorbing_phase(self):
         state = 0
+        
+        self.absorbing_before_p_states=[]
+        self.absorbing_after_p_states=[]
         for i in range(0,len(self.m)):
             block_value = self.m[len(self.m)-1-i]
             state = state ^ block_value
+            self.absorbing_before_p_states.append(state)
+            print('------------------')
             print(hex(state))
+            print('------------------')
             state = self.permutation(state)
+            print('***********************')
+            print(hex(state))
+            print('***********************')
+            self.absorbing_after_p_states.append(state)
+
             
             
         return state   
@@ -119,6 +133,7 @@ class Spongent:
         self.lCounter.set_state(self.initial_lCounter_state)
         for i in range (0,self.R):
             state = self.iteration_permutation(state)
+            #print(hex(state))
             
         return state
 

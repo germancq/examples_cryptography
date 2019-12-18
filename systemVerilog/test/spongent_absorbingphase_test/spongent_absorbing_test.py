@@ -6,7 +6,7 @@
 #    By: germancq <germancq@dte.us.es>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/12/17 19:19:14 by germancq          #+#    #+#              #
-#    Updated: 2019/12/17 19:19:51 by germancq         ###   ########.fr        #
+#    Updated: 2019/12/18 16:25:07 by germancq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,24 +48,45 @@ def setup_function(dut,msg):
 
 
 @cocotb.coroutine
-def rst_function_test(dut,msg):
+def rst_function_test(dut,expected_padded_msg):
     dut.rst = 1
     yield n_cycles_clock(dut,20)
     
     if(dut.permutation_impl.rst != 1):
         raise TestFailure("""Error in reset, wrong value = {0}, expected value = {1}""".format(hex(int(dut.permutation_impl.rst.value)),hex(1))) 
 
-    print(hex(int(dut.msg)))
-    print(hex(int(dut.padded_msg)))
+    
+
+    if(dut.padded_msg != expected_padded_msg):
+        raise TestFailure("""Error in padded_msg, wrong value = {0}, expected value = {1}""".format(hex(int(dut.padded_msg.value)),hex(expected_padded_msg))) 
 
 
 @cocotb.coroutine
-def permutation_test(dut,spongent_impl,state):
+def absorbing_test(dut,expected_state,spongent_impl):
     dut.rst = 0
 
-    yield n_cycles_clock(dut,1)
-
+    if(dut.absorbing_phase_impl.permutation_initial_state != spongent_impl.absorbing_before_p_states[0]):
+        raise TestFailure("""Error in absorbing initial state, wrong value = {0}, expected value = {1}""".format(hex(int(dut.absorbing_phase_impl.permutation_initial_state.value)),hex(spongent_impl.absorbing_before_p_states[0]))) 
     
+    i = 0
+    print(int(dut.absorbing_phase_impl.DATA_WIDTH_PADDED))
+
+    while (dut.end_absorbing == 0):
+        if(dut.absorbing_phase_impl.end_permutation == 1):
+            
+            print(hex(int(dut.absorbing_phase_impl.msg_chunk.value)))
+
+            yield n_cycles_clock(dut,1)
+            
+            if(dut.absorbing_phase_impl.absorbing_state != spongent_impl.absorbing_after_p_states[i]):
+                 raise TestFailure("""Error in absorbing after permutation state, wrong value = {0}, expected value = {1} at {2}""".format(hex(int(dut.absorbing_phase_impl.absorbing_state.value)),hex(spongent_impl.absorbing_after_p_states[i]),i)) 
+
+            i = i+1    
+            
+        yield n_cycles_clock(dut,1)
+
+    if(dut.absorbing_state != expected_state):
+        raise TestFailure("""Error in absorbing state, wrong value = {0}, expected value = {1}""".format(hex(int(dut.absorbing_state.value)),hex(expected_state))) 
 
 
 @cocotb.coroutine
@@ -77,12 +98,15 @@ def n_cycles_clock(dut,n):
         
 @cocotb.coroutine
 def run_test(dut,msg=0):
-    msg = random.randint(0,(2**8)-1)
+    msg = random.randint(0,(2**24)-1)
     print(hex(msg))
     spongent_impl = spongent.Spongent(88,80,8,45)
+    spongent_impl.initialization_phase(msg,64)
+    expected_padded_msg = spongent_impl.padded_msg
+    expected_state = spongent_impl.absorbing_phase()
     setup_function(dut,msg) 
-    yield rst_function_test(dut,msg)    
-    yield permutation_test(dut,spongent_impl,msg)  
+    yield rst_function_test(dut,expected_padded_msg)    
+    yield absorbing_test(dut,expected_state,spongent_impl)  
 
              
 n = 10
