@@ -2,17 +2,17 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-12-16 13:06:12
  * @ Modified by: Your name
- * @ Modified time: 2019-12-18 16:25:34
+ * @ Modified time: 2019-12-18 18:43:00
  * @ Description:
  */
 
 module spongent #(
-    parameter N = 88,
-    parameter c = 80,
-    parameter r = 8,
-    parameter R = 45,
-    parameter lCounter_initial_state = 6'h05,
-    parameter lCounter_feedback_coeff = 7'h61,
+    parameter N = 256,
+    parameter c = 256,
+    parameter r = 16,
+    parameter R = 140,
+    parameter lCounter_initial_state = 8'h9E,
+    parameter lCounter_feedback_coeff = 9'h11D,
     parameter DATA_WIDTH = 64
 )
 (
@@ -42,6 +42,10 @@ module spongent #(
     logic end_permutation;
     logic rst_permutation;
 
+    assign rst_permutation = end_absorbing == 0 ? rst_permutation_from_absorb : rst_permutation_from_squezzing ;
+
+    assign permutation_initial_state = end_absorbing == 0 ? permutation_initial_state_from_absorb : permutation_initial_state_from_squezzing;
+
     permutation #(.DATA_WIDTH(b),.R(R)) permutation_impl(
         .clk(clk),
         .rst(rst_permutation),
@@ -58,6 +62,8 @@ module spongent #(
 
     logic end_absorbing;
     logic [b-1:0] absorbing_state;
+    logic rst_permutation_from_absorb;
+    logic [b-1:0] permutation_initial_state_from_absorb;
 
     absorbing_phase #(.DATA_WIDTH(DATA_WIDTH),.b(b),.r(r)) absorbing_phase_impl(
         .clk(clk),
@@ -65,10 +71,24 @@ module spongent #(
         .end_permutation(end_permutation),
         .padded_msg(padded_msg),
         .permutation_state(permutation_state),
-        .rst_permutation(rst_permutation),
-        .permutation_initial_state(permutation_initial_state),
+        .rst_permutation(rst_permutation_from_absorb),
+        .permutation_initial_state(permutation_initial_state_from_absorb),
         .end_absorbing(end_absorbing),
         .absorbing_state(absorbing_state)  
+    );
+
+    logic rst_permutation_from_squezzing;
+    logic [b-1:0] permutation_initial_state_from_squezzing;
+
+    squeezing_phase #(.N(N),.r(r),.b(b)) squeezing_phase_impl(
+        .clk(clk),
+        .rst(rst | ~end_absorbing),
+        .end_permutation(end_permutation),
+        .permutation_state(permutation_state),
+        .rst_permutation(rst_permutation_from_squezzing),
+        .permutation_initial_state(permutation_initial_state_from_squezzing),
+        .end_squeezing(end_hash),
+        .result(hash)
     );
 
 endmodule : spongent
@@ -92,15 +112,15 @@ module absorbing_phase #(
 );
     localparam DATA_WIDTH_PADDED = DATA_WIDTH + (r - (DATA_WIDTH % r));
     
-    logic [$clog2(DATA_WIDTH_PADDED/r)-1:0] counter_o;
+    logic [$clog2(DATA_WIDTH_PADDED/r):0] counter_o;
     logic counter_up;
 
-    counter #(.DATA_WIDTH($clog2(DATA_WIDTH_PADDED/r))) counter_impl(
+    counter #(.DATA_WIDTH($clog2(DATA_WIDTH_PADDED/r)+1)) counter_impl(
         .clk(clk),
         .rst(rst),
         .up(counter_up),
         .down(1'b0),
-        .din({$clog2(DATA_WIDTH_PADDED/r){1'b0}}),
+        .din({$clog2(DATA_WIDTH_PADDED/r)+1{1'b0}}),
         .dout(counter_o)
     );
 
@@ -137,11 +157,12 @@ module absorbing_phase #(
             RST_PERMUTATION : begin
                 next_state = PERMUTATION;
                 if(end_absorbing == 1) begin
+                    rst_permutation = 0;
                     next_state = END;
                 end
             end
             END : begin
-                
+                rst_permutation = 0;
             end
             default:;
         endcase
@@ -181,6 +202,113 @@ module absorbing_phase #(
 
 
 endmodule: absorbing_phase
+
+
+
+module squeezing_phase #(
+    parameter N = 88,
+    parameter b = 88,
+    parameter r = 8
+)
+(
+    input clk,
+    input rst,
+    input end_permutation,
+    input [b-1:0] permutation_state,
+    output logic rst_permutation,
+    output [b-1:0] permutation_initial_state,
+    output end_squeezing,
+    output logic [N-1:0] result
+);
+
+
+    logic [$clog2(N/r):0] counter_o;
+    logic counter_up;
+
+    counter #(.DATA_WIDTH($clog2(N/r)+1)) counter_impl(
+        .clk(clk),
+        .rst(rst),
+        .up(counter_up),
+        .down(1'b0),
+        .din({$clog2(N/r)+1{1'b0}}),
+        .dout(counter_o)
+    );
+
+    assign end_squeezing = counter_o == N/r ? 1 : 0;
+
+    logic [b-1:0] state;
+    assign permutation_initial_state = state;
+
+    logic [r-1:0] result_chunk;
+    assign result_chunk = r==8 ? permutation_state[r-1:0] : {permutation_state[7:0],permutation_state[15:8]};
+
+    typedef enum logic [1:0] {IDLE,PERMUTATION,RST_PERMUTATION,END} state_t;
+    state_t current_state, next_state;
+
+    always_comb begin
+        next_state = current_state;
+        rst_permutation = 1;
+        counter_up = 0;
+        case(current_state)
+            IDLE : begin
+                rst_permutation = 0;
+                next_state = RST_PERMUTATION;
+            end
+            RST_PERMUTATION : begin
+                next_state = PERMUTATION;
+                counter_up = 1;
+                if(end_squeezing == 1) begin
+                    next_state = END;
+                end
+            end
+            PERMUTATION : begin
+                rst_permutation = 0;
+                if(end_permutation == 1) begin
+                    next_state = RST_PERMUTATION;
+                    
+                end
+            end
+            END : begin
+                
+            end
+            default:;
+        endcase
+    end
+
+    always_ff @(posedge clk) begin
+
+        case(current_state)
+            IDLE : begin
+                result <= result_chunk;
+                state <= permutation_state;
+            end
+            RST_PERMUTATION : begin
+                
+            end
+            PERMUTATION : begin
+                if(end_permutation == 1) begin
+                    state <= permutation_state;
+                    result <= (result << r) | result_chunk;
+                end
+            end
+            END : begin
+                
+            end
+            default:;
+        endcase
+    end
+
+    always_ff @(posedge clk) begin
+        if(rst == 1) begin
+            current_state <= IDLE;
+        end
+        else begin
+            current_state <= next_state;
+        end
+    end
+
+
+endmodule : squeezing_phase
 
 
 module permutation #(

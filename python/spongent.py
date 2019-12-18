@@ -93,12 +93,16 @@ class Spongent:
 
     def squeezing_phase(self,state):
         result = 0
+        self.squeezing_results = []
+        self.squeezing_states = []
         for i in range(0, int(self.n/self.r)):
            value = state & self.mask
            if(self.r == 16):
                value = (value >> 8) | ((value & 0XFF) << 8)   
            result = value | result   
+           self.squeezing_results.append(result)
            result = result << self.r
+           self.squeezing_states.append(state)
            print(hex(result))  
            state = self.permutation(state)
 

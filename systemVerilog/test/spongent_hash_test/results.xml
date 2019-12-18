@@ -1,0 +1,15 @@
+<testsuites name="results">
+  <testsuite name="all" package="all" tests="0">
+    <property name="random_seed" value="1576690984" />
+    <testcase classname="spongent_hash_test" name="run_test_001" ratio_time="2084281866303.6006" sim_time_ns="57231000000000.0" time="27.458378314971924" />
+    <testcase classname="spongent_hash_test" name="run_test_002" ratio_time="2089735976834.877" sim_time_ns="57231000000000.0" time="27.38671326637268" />
+    <testcase classname="spongent_hash_test" name="run_test_003" ratio_time="2087865102623.0227" sim_time_ns="57231000000000.0" time="27.411253690719604" />
+    <testcase classname="spongent_hash_test" name="run_test_004" ratio_time="2085973919248.7122" sim_time_ns="57231000000000.0" time="27.436105251312256" />
+    <testcase classname="spongent_hash_test" name="run_test_005" ratio_time="2087141735495.8933" sim_time_ns="57231000000000.0" time="27.420753955841064" />
+    <testcase classname="spongent_hash_test" name="run_test_006" ratio_time="2089196818478.1882" sim_time_ns="57231000000000.0" time="27.393780946731567" />
+    <testcase classname="spongent_hash_test" name="run_test_007" ratio_time="2087922253416.2207" sim_time_ns="57231000000000.0" time="27.410503387451172" />
+    <testcase classname="spongent_hash_test" name="run_test_008" ratio_time="2089079180568.6323" sim_time_ns="57231000000000.0" time="27.395323514938354" />
+    <testcase classname="spongent_hash_test" name="run_test_009" ratio_time="2086598074369.0698" sim_time_ns="57231000000000.0" time="27.427898406982422" />
+    <testcase classname="spongent_hash_test" name="run_test_010" ratio_time="2070173155889.617" sim_time_ns="57231000000000.0" time="27.6455135345459" />
+  </testsuite>
+</testsuites>
