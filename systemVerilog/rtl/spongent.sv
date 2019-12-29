@@ -2,7 +2,7 @@
  * @ Author: German Cano Quiveu, germancq
  * @ Create Time: 2019-12-16 13:06:12
  * @ Modified by: Your name
- * @ Modified time: 2019-12-18 18:43:00
+ * @ Modified time: 2019-12-29 02:48:40
  * @ Description:
  */
 
@@ -234,7 +234,7 @@ module squeezing_phase #(
         .dout(counter_o)
     );
 
-    assign end_squeezing = counter_o == N/r ? 1 : 0;
+    assign end_squeezing = counter_o >= N/r -1  ? 1 : 0;
 
     logic [b-1:0] state;
     assign permutation_initial_state = state;
@@ -256,7 +256,7 @@ module squeezing_phase #(
             end
             RST_PERMUTATION : begin
                 next_state = PERMUTATION;
-                counter_up = 1;
+                
                 if(end_squeezing == 1) begin
                     next_state = END;
                 end
@@ -265,7 +265,7 @@ module squeezing_phase #(
                 rst_permutation = 0;
                 if(end_permutation == 1) begin
                     next_state = RST_PERMUTATION;
-                    
+                    counter_up = 1;
                 end
             end
             END : begin
